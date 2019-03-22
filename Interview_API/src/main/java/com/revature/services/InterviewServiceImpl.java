@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import java.io.Console;
 import java.util.Date;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
 import com.netflix.discovery.shared.Application;
+import com.revature.cognito.constants.CognitoRoles;
 import com.revature.cognito.dtos.CognitoRegisterBody;
 import com.revature.cognito.dtos.CognitoRegisterResponse;
 import com.revature.cognito.dtos.CognitoTokenClaims;
@@ -40,6 +42,7 @@ import com.revature.models.AssociateInput;
 import com.revature.models.Client;
 import com.revature.models.Interview;
 import com.revature.repos.AssociateInputRepo;
+import com.revature.repos.ClientRepo;
 import com.revature.dtos.FeedbackData;
 import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
@@ -59,6 +62,9 @@ public class InterviewServiceImpl implements InterviewService {
 
 	@Autowired
 	private AssociateInputRepo associateRepo;
+	
+	@Autowired
+	private ClientRepo clientRepo;
 
 	@Autowired
 	private IUserClient userClient;
@@ -84,18 +90,33 @@ public class InterviewServiceImpl implements InterviewService {
 
 	@Override
 	public List<Interview> findAll() {
-		// TODO Auto-generated method stub
-		return interviewRepo.findAll();
+		List<String> roles = cognitoUtil.getRequesterRoles();
+		if(roles.contains(CognitoRoles.ADMIN) || roles.contains(CognitoRoles.STAGING_MANAGER))
+			return interviewRepo.findAll();
+		else {
+			String email = cognitoUtil.getRequesterClaims().getEmail();
+			return interviewRepo.findByAssociateEmail(email);
+		}
 	}
 
 
-	public Interview addNewInterview(NewInterviewData i) {		
+	public Interview addNewInterview(NewInterviewData i) {
 		try {
 			String managerEmail = cognitoUtil.getRequesterClaims().getEmail();
 			String associateEmail = i.getAssociateEmail();
 			Date scheduled = new Date(i.getDate());// TODO: check this is valid date
 			String location = i.getLocation();
-			Interview newInterview = new Interview(0, managerEmail, associateEmail, scheduled, null, null, location, null, null, new Client(1, "Dell"));//new Interview(0, managerEmail, associateId, scheduled, null, null, i.getLocation(), null, null);	
+			String client = i.getClient();
+			
+			Client c = clientRepo.getByClientName(client);
+			
+			if (c == null) {
+				c = new Client(0, client);
+				clientRepo.save(c);
+			}
+			
+
+			Interview newInterview = new Interview(0, managerEmail, associateEmail, scheduled, null, null, location, null, null, c);	
 			return save(newInterview);
 		} catch (Exception e) {
 			System.out.println("exception: " + e);
@@ -181,8 +202,6 @@ public class InterviewServiceImpl implements InterviewService {
 
 	public Interview setFeedback(FeedbackData f) {
 		InterviewFeedback interviewFeedback = new InterviewFeedback(0, new Date(f.getFeedbackRequestedDate()), f.getFeedbackText(), new Date(f.getFeedbackReceivedDate()), new FeedbackStatus(1, "Pending"));
-		System.out.println("interviewFeedback\n" + interviewFeedback.toString());
-		System.out.println("interviewStatus\n" + interviewFeedback.getStatus());
 		Interview i = interviewRepo.findById(f.getInterviewId());
 		if(i != null) {
 			interviewFeedback = feedbackRepo.save(interviewFeedback);
@@ -437,5 +456,10 @@ public class InterviewServiceImpl implements InterviewService {
 	@Override
 	public Interview findByManagerEmail(String s) {
 		return null;
+	}
+
+	public Page<Interview> findAllByAssociateEmail(String email, Pageable page) {
+		PageImpl PI = ListToPage.getPage(interviewRepo.findByAssociateEmail(email), page);
+		return PI;
 	}
 }
