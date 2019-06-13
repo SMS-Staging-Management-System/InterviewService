@@ -22,7 +22,7 @@ spring:
     driverClassName: org.postgresql.Driver
     initialization-mode: NEVER
     password: ${DB_PASSWORD}
-    url: jdbc:postgresql://${DB_URL}:5432/postgres
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     
   jpa:
@@ -34,22 +34,21 @@ spring:
       hibernate:
         default_schema: ${DB_SCHEMA}
     show-sql: false  
+    
+interview-service:
+  ribbon:
+    listOfServers: ${GATEWAY_URL:http://localhost:8765}/interview-service/
+    
+user-service:
+  ribbon:
+    listOfServers: ${GATEWAY_URL:http://localhost:8765}/user-service/
 
 ---
 spring:
   profiles: dev
 
 server:
-  port: 8091
-
-eureka:
-  client:
-    service-url:
-      defaultZone: ${DISCOVERY_URL:http://localhost:8888}/eureka/
-  instance:
-    lease-renewal-interval-in-seconds: 1
-    lease-expiration-duration-in-seconds: 2
-    
+  port: 8091 
     
 ---
 spring:
@@ -57,15 +56,7 @@ spring:
 
 server:
   port: 5000
-  
-eureka:
-  client:
-    enabled: false
-    
-ribbon:
-  eureka: 
-    enabled: false
-    
+
 interview-service:
   ribbon:
     listOfServers: ${GATEWAY_URL}
