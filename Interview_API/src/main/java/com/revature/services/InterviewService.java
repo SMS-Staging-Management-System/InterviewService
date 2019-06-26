@@ -22,7 +22,7 @@ public interface InterviewService {
 	Interview save(Interview i);
 	Interview update(Interview i);
 	Interview delete(Interview i);
-	Interview findById(int id);
+	Interview findById(Integer id);
 	Interview findByAssociateEmail(String s);
 	Interview findByManagerEmail(String s);
 	
