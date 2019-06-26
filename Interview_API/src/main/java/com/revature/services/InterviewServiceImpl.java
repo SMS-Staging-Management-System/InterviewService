@@ -160,7 +160,12 @@ public class InterviewServiceImpl implements InterviewService {
 	public Interview findById(Integer i) {
 		// TODO Auto-generated method stub
 		Optional<Interview> res = interviewRepo.findById(i);
-		return res.get();
+		try {
+			return res.get();
+		} catch(Exception e) {
+			System.out.println("bad");
+			throw e;
+		}
 	}
 
 	@Override
