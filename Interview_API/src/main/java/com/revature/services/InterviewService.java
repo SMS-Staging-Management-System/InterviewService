@@ -1,5 +1,6 @@
 package com.revature.services;
 
+import java.util.Date;
 import java.util.List;
 
 import com.revature.dtos.AssociateInterview;
@@ -45,4 +46,5 @@ public interface InterviewService {
 	Integer[] getAssociateNeedFeedbackChart();
 	InterviewFeedback getInterviewFeedbackByInterviewID(int interviewId);
 	Interview markReviewed(int interviewId);
+	List<Interview> findByScheduledWeek(Date date);
 }
