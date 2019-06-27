@@ -251,7 +251,7 @@ public class InterviewController {
 		return interviewService.getAssociateNeedFeedbackChart();
 	}
 	
-	@GetMapping("reports/totalInterviewsByWeek/{epochDate}")
+	@GetMapping("CalendarWeek/{epochDate}")
 	public List<Interview> findByCalendarWeek(@PathVariable long epochDate) {
 		
 		// Epoch dates are easier to pass, so use epoch date and set date using that
