@@ -444,4 +444,28 @@ public class InterviewServiceImpl implements InterviewService {
 		PageImpl PI = ListToPage.getPage(interviewRepo.findByAssociateEmail(email), page);
 		return PI;
 	}
+	@Override
+	public List<Interview> findByScheduledWeek(Date date) {
+		
+		// Set up Calendar instance and set the date to the passed in date
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		
+		// Set the time to Sunday at midnight of the beginning of the week
+		int weekYear = cal.getWeekYear();
+		int weekOfYear = cal.get(Calendar.WEEK_OF_YEAR);
+		cal.setWeekDate(weekYear, weekOfYear, Calendar.SUNDAY);
+		cal.set(Calendar.HOUR, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		
+		// Use that Sunday as the beginning date and the following
+		// Sunday at midnight (168 hours later) as the time frame
+		Date first = cal.getTime();
+		cal.add(Calendar.HOUR, 168);
+		Date last = cal.getTime();
+		
+		return interviewRepo.findByScheduledBetween(first, last);
+	}
 }
