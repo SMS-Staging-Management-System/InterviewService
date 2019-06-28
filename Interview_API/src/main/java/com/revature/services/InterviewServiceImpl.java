@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.revature.cognito.constants.CognitoRoles;
@@ -155,17 +157,15 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 
 	@Override
-	public Interview findById(int i) {
-		List<Interview> listInt = interviewRepo.findAll();
-		Interview found = new Interview();
-
-		for (Interview it : listInt) {
-			if (it.getId() == i) {
-					found = it;
-			}
+	public Interview findById(Integer i) {
+		// TODO Auto-generated method stub
+		Optional<Interview> res = interviewRepo.findById(i);
+		try {
+			return res.get();
+		} catch(Exception e) {
+			System.out.println("bad");
+			throw e;
 		}
-
-		return found;
 	}
 
 	@Override
@@ -184,7 +184,7 @@ public class InterviewServiceImpl implements InterviewService {
 
 	public Interview setFeedback(FeedbackData f) {
 		InterviewFeedback interviewFeedback = new InterviewFeedback(0, new Date(f.getFeedbackRequestedDate()), f.getFeedbackText(), new Date(f.getFeedbackReceivedDate()), new FeedbackStatus(1, "Pending"));
-		Interview i = interviewRepo.findById(f.getInterviewId());
+		Interview i = this.findById(f.getInterviewId());
 		if(i != null) {
 			interviewFeedback = feedbackRepo.save(interviewFeedback);
 			i.setFeedback(interviewFeedback);	
@@ -420,12 +420,12 @@ public class InterviewServiceImpl implements InterviewService {
 	
 	@Override
 	public InterviewFeedback getInterviewFeedbackByInterviewID(int interviewId) {
-		return interviewRepo.findById(interviewId).getFeedback();
+		return this.findById(interviewId).getFeedback();
 	}
 
 	@Override
 	public Interview markReviewed(int interviewId) {
-		Interview I = interviewRepo.findById(interviewId);
+		Interview I = this.findById(interviewId);
 		I.setReviewed(new Date(System.currentTimeMillis()));
 		return interviewRepo.save(I);
 	}
