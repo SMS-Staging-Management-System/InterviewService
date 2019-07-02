@@ -21,6 +21,7 @@ import com.revature.cognito.constants.CognitoRoles;
 import com.revature.cognito.utils.CognitoUtil;
 import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.FeedbackData;
+import com.revature.dtos.FeedbackStat;
 import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
 import com.revature.dtos.NewAssociateInput;
@@ -500,5 +501,29 @@ public class InterviewServiceImpl implements InterviewService {
 		Date last = cal.getTime();
 		
 		return interviewRepo.findByScheduledBetween(first, last);
+	}
+
+
+	@Override
+	public Page<FeedbackStat> findFeedbackStats(Pageable page) {
+		List<Interview> interviewStats = interviewRepo.findByFeedbackIsNotNullOrderByFeedbackFeedbackRequested();
+		List<FeedbackStat> returnList = new ArrayList<>(interviewStats.size());
+		interviewStats.forEach(inter -> {
+			String mName = "";
+			String aName = "";
+			try {
+				User manag = userClient.findByEmail(inter.getManagerEmail()).getBody();
+				User assoc = userClient.findByEmail(inter.getAssociateEmail()).getBody();
+				mName = manag.getFirstName() + " " + manag.getLastName();
+				aName = assoc.getFirstName() + " " + assoc.getLastName();
+			} catch(Exception e){
+				System.out.println(e);
+			} finally {
+				returnList.add(new FeedbackStat(inter, mName.trim(), aName.trim()));
+			}
+			});
+		// because I am not used to dealing with dto conversions and pages
+		// some of the metadata in PageImpl may be wrong.
+		return ListToPage.getPage(returnList, page);
 	}
 }

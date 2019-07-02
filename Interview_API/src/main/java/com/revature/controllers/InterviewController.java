@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.FeedbackData;
+import com.revature.dtos.FeedbackStat;
 import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
 import com.revature.models.Interview;
@@ -206,6 +208,14 @@ public class InterviewController {
         return interviewService.getAssociateNeedFeedback(pageParameters);
     }
 	
+	@GetMapping("reports/FeedbackStats/page")
+	public Page<FeedbackStat> getAllFeedbackStats(
+			@RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
+			@RequestParam(name="pageSize", defaultValue="5") Integer pageSize
+			) {
+		Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
+		return interviewService.findFeedbackStats(pageParameters);
+	}
 
 	@GetMapping("reports/interview24")
 	public List<Interview24Hour> getAll24HourNotice() {
