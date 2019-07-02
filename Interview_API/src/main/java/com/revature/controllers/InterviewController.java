@@ -208,14 +208,6 @@ public class InterviewController {
         return interviewService.getAssociateNeedFeedback(pageParameters);
     }
 	
-	@GetMapping("reports/FeedbackStats")
-	public List<FeedbackStat> getAllFeedbackStats() {
-		List<Interview> interviewList = interviewService.findFeedbackStats();
-		List<FeedbackStat> returnList = new ArrayList<>(interviewList.size());
-		interviewList.forEach(inter -> {returnList.add(new FeedbackStat(inter));});
-		return returnList;
-	}
-	
 	@GetMapping("reports/FeedbackStats/page")
 	public Page<FeedbackStat> getAllFeedbackStats(
 			@RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
