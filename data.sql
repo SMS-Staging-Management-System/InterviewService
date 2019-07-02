@@ -26,8 +26,10 @@ SET SCHEMA 'interview_service';
 			feedback_received                timestamp not null,
 			feedback_delivered               timestamp,
 			feedback_status                  integer   not null,
+			interview_format				 integer   not null,
 			constraint pk_interview_feedback primary key (interview_feedback_id),
-			constraint fk_feedback_status    foreign key (feedback_status) references feedback_status (feedback_status_id)
+			constraint fk_feedback_status    foreign key (feedback_status) references feedback_status (feedback_status_id),
+			constraint fk_interview_format   foreign key (interview_format) references interview_format (interview_format_id)
 		);
 		create table associate_input (
 			associate_input_id               serial    not null unique,
@@ -74,16 +76,16 @@ SET SCHEMA 'interview_service';
 		insert into client (client_name) values ('Dell');
 		insert into client (client_name) values ('Hewlett Packard');
 	/*interview_feedback*/
-		insert into interview_feedback (feedback_requested, feedback, feedback_received, feedback_delivered, feedback_status)
-			values ('2019-03-01 13:00:00', 'Solid interview.', '2019-03-02 14:00:00', '2019-03-03 15:00:00', 1);
-		insert into interview_feedback (feedback_requested, feedback, feedback_received, feedback_delivered, feedback_status)
-			values ('2019-03-02 13:00:00', 'Solid interview.', '2019-03-03 14:00:00', '2019-03-04 15:00:00', 2);
-		insert into interview_feedback (feedback_requested, feedback, feedback_received, feedback_delivered, feedback_status)
-			values ('2019-03-03 13:00:00', 'Solid interview.', '2019-03-04 14:00:00', '2019-03-05 15:00:00', 3);
-		insert into interview_feedback (feedback_requested, feedback, feedback_received, feedback_delivered, feedback_status)
-			values ('2019-03-04 13:00:00', 'Solid interview.', '2019-03-05 14:00:00', '2019-03-06 15:00:00', 4);
-		insert into interview_feedback (feedback_requested, feedback, feedback_received, feedback_delivered, feedback_status)
-			values ('2019-03-05 13:00:00', 'Solid interview.', '2019-03-06 14:00:00', '2019-03-07 15:00:00', 5);
+		insert into interview_feedback (feedback_requested, feedback, feedback_received, feedback_delivered, feedback_status, interview_format)
+			values ('2019-03-01 13:00:00', 'Solid interview.', '2019-03-02 14:00:00', '2019-03-03 15:00:00', 1, 1);
+		insert into interview_feedback (feedback_requested, feedback, feedback_received, feedback_delivered, feedback_status, interview_format)
+			values ('2019-03-02 13:00:00', 'Solid interview.', '2019-03-03 14:00:00', '2019-03-04 15:00:00', 2, 2);
+		insert into interview_feedback (feedback_requested, feedback, feedback_received, feedback_delivered, feedback_status, interview_format)
+			values ('2019-03-03 13:00:00', 'Solid interview.', '2019-03-04 14:00:00', '2019-03-05 15:00:00', 3, 3);
+		insert into interview_feedback (feedback_requested, feedback, feedback_received, feedback_delivered, feedback_status, interview_format)
+			values ('2019-03-04 13:00:00', 'Solid interview.', '2019-03-05 14:00:00', '2019-03-06 15:00:00', 4, 4);
+		insert into interview_feedback (feedback_requested, feedback, feedback_received, feedback_delivered, feedback_status, interview_format)
+			values ('2019-03-05 13:00:00', 'Solid interview.', '2019-03-06 14:00:00', '2019-03-07 15:00:00', 5, 1);
 	/*associate_input*/
 		insert into associate_input (received_notifications, description_provided, interview_format, proposed_format)
 			values ('2019-02-28 14:00:00', true, 1, 1);

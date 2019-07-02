@@ -31,10 +31,13 @@ import com.revature.models.Client;
 import com.revature.models.FeedbackStatus;
 import com.revature.models.Interview;
 import com.revature.models.InterviewFeedback;
+import com.revature.models.InterviewFormat;
 import com.revature.models.User;
 import com.revature.repos.AssociateInputRepo;
 import com.revature.repos.ClientRepo;
 import com.revature.repos.FeedbackRepo;
+import com.revature.repos.FeedbackStatusRepo;
+import com.revature.repos.InterviewFormatRepo;
 import com.revature.repos.InterviewRepo;
 import com.revature.utils.ListToPage;
 
@@ -62,7 +65,13 @@ public class InterviewServiceImpl implements InterviewService {
 	public Interview save(Interview i) {
 		return interviewRepo.save(i);
 	}
+	
+	@Autowired
+	private FeedbackStatusRepo feedbackStatusRepo ;
 
+	@Autowired
+	private InterviewFormatRepo interviewFormatRepo;
+	
 	@Override
 	public Interview update(Interview i) {
 		return interviewRepo.save(i);
@@ -181,13 +190,37 @@ public class InterviewServiceImpl implements InterviewService {
 	
 		return temp;
     }
+	
+	
+	public InterviewFormat findFormatById(Integer i) {
+		Optional<InterviewFormat> res = interviewFormatRepo.findById(i);
+		try {
+			return res.get();
+		}
+		catch(Exception e) {
+			throw e;
+		}
+	}
+	
+	@Override
+	public FeedbackStatus findStatusById(Integer i) {
+		Optional<FeedbackStatus> res = feedbackStatusRepo.findById(i);
+		try {
+			return res.get();
+		}
+		catch(Exception e) {
+			throw e;
+		}
+	}
 
 	public Interview setFeedback(FeedbackData f) {
-		InterviewFeedback interviewFeedback = new InterviewFeedback(0, new Date(f.getFeedbackRequestedDate()), f.getFeedbackText(), new Date(f.getFeedbackReceivedDate()), new FeedbackStatus(1, "Pending"));
+		FeedbackStatus status = this.findStatusById(f.getStatusId());
+		InterviewFormat format = this.findFormatById(f.getFormat());
+		InterviewFeedback interviewFeedback = new InterviewFeedback(0, new Date(f.getFeedbackRequestedDate()), f.getFeedbackText(), new Date(f.getFeedbackReceivedDate()), new Date(f.getFeedbackDeliveredDate()), status, format);
 		Interview i = this.findById(f.getInterviewId());
 		if(i != null) {
 			interviewFeedback = feedbackRepo.save(interviewFeedback);
-			i.setFeedback(interviewFeedback);	
+			i.setFeedback(interviewFeedback);
 			return save(i);
 		}
 		else 
