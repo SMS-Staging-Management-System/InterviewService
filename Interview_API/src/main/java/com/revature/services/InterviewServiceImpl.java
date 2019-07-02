@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -25,6 +26,7 @@ import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
 import com.revature.dtos.NewAssociateInput;
 import com.revature.dtos.NewInterviewData;
+import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.feign.IUserClient;
 import com.revature.models.AssociateInput;
 import com.revature.models.Client;
@@ -94,27 +96,23 @@ public class InterviewServiceImpl implements InterviewService {
 
 
 	public Interview addNewInterview(NewInterviewData i) {
-		try {
-			String managerEmail = cognitoUtil.getRequesterClaims().getEmail();
-			String associateEmail = i.getAssociateEmail();
-			Date scheduled = new Date(i.getDate());// TODO: check this is valid date
-			String location = i.getLocation();
-			String client = i.getClient();
-			
-			Client c = clientRepo.getByClientName(client);
-			
-			if (c == null) {
-				c = new Client(0, client);
-				clientRepo.save(c);
-			}
-			
-
-			Interview newInterview = new Interview(0, managerEmail, associateEmail, scheduled, null, null, location, null, null, c);	
-			return save(newInterview);
-		} catch (Exception e) {
-			System.out.println("exception: " + e);
-			return null;
+		
+		String managerEmail = cognitoUtil.getRequesterClaims().getEmail();
+		String associateEmail = i.getAssociateEmail();
+		Date scheduled = new Date(i.getDate());// TODO: check this is valid date
+		String location = i.getLocation();
+		String client = i.getClient();
+				
+		Client c = clientRepo.getByClientName(client);
+				
+		if (c == null) {
+			c = new Client(0, client);
+			clientRepo.save(c);
 		}
+				
+		Interview newInterview = new Interview(0, managerEmail, associateEmail, scheduled, null, null, location, null, null, c);	
+		
+		return save(newInterview);
 	}
 
 
@@ -166,15 +164,19 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 
 	@Override
-	public Interview findById(Integer i) {
-		// TODO Auto-generated method stub
-		Optional<Interview> res = interviewRepo.findById(i);
+	public Interview findById(Integer id) {
+		
+		Interview res = null;
+		
 		try {
-			return res.get();
-		} catch(Exception e) {
-			System.out.println("bad");
-			throw e;
+			res = interviewRepo.findById(id).get();
+			
+		} catch(NoSuchElementException e) {
+			
+			throw new ResourceNotFoundException("findById failed to find an interview of id: " + id);
 		}
+		
+		return res;
 	}
 
 	@Override
@@ -192,28 +194,39 @@ public class InterviewServiceImpl implements InterviewService {
     }
 	
 	
-	public InterviewFormat findFormatById(Integer i) {
-		Optional<InterviewFormat> res = interviewFormatRepo.findById(i);
+	public InterviewFormat findFormatById(Integer id) {
+		
+		InterviewFormat res = null;
+
 		try {
-			return res.get();
+			res = interviewFormatRepo.findById(id).get();
+		
+		} catch(NoSuchElementException e) {
+			
+			throw new ResourceNotFoundException("findFormatById failed to find an InterviewFormat of id: " + id);
 		}
-		catch(Exception e) {
-			throw e;
-		}
+		
+		return res;
 	}
 	
 	@Override
-	public FeedbackStatus findStatusById(Integer i) {
-		Optional<FeedbackStatus> res = feedbackStatusRepo.findById(i);
+	public FeedbackStatus findStatusById(Integer id) {
+		
+		FeedbackStatus res = null;
+		
 		try {
-			return res.get();
+			res = feedbackStatusRepo.findById(id).get();
+		
+		} catch(Exception e) {
+			
+			throw new ResourceNotFoundException("findStatusById failed to find a FeedbackStatus of id " + id);
 		}
-		catch(Exception e) {
-			throw e;
-		}
+		
+		return res;
 	}
 
 	public Interview setFeedback(FeedbackData f) {
+	
 		FeedbackStatus status = this.findStatusById(f.getStatusId());
 		InterviewFormat format = this.findFormatById(f.getFormat());
 		InterviewFeedback interviewFeedback = new InterviewFeedback(0, new Date(f.getFeedbackRequestedDate()), f.getFeedbackText(), new Date(f.getFeedbackReceivedDate()), new Date(f.getFeedbackDeliveredDate()), status, format);
@@ -225,7 +238,7 @@ public class InterviewServiceImpl implements InterviewService {
 		}
 		else 
 			return null;
-  }
+	}
   
 	@Override
 	public List<User> getAssociateNeedFeedback() {
