@@ -120,13 +120,10 @@ public class InterviewController {
 	
 	@PostMapping("/new")
 	public ResponseEntity<Interview> addNewInterview(@Valid @RequestBody NewInterviewData i) {
+		
 		Interview returnedInterview = interviewService.addNewInterview(i);
-		if(returnedInterview != null) {
-			return ResponseEntity.ok(returnedInterview);
-		}
-		else {
-			return new ResponseEntity<Interview>(HttpStatus.BAD_REQUEST);
-		}
+		
+		return ResponseEntity.ok(returnedInterview);
 	}
   
 	@Autowired
