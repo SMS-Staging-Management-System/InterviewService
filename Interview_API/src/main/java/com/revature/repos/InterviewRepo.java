@@ -14,7 +14,6 @@ public interface InterviewRepo extends JpaRepository<Interview, Integer> {
 
 	Optional<Interview> save(Optional<Interview> i);
 
-	List<Interview> findByFeedbackIsNotNull();
 	List<Interview> findByFeedbackIsNotNullOrderByFeedbackFeedbackRequested();
 	
 }
