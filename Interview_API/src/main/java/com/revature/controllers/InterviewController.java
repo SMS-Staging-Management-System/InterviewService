@@ -214,12 +214,7 @@ public class InterviewController {
 			@RequestParam(name="pageSize", defaultValue="5") Integer pageSize
 			) {
 		Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
-		Page<Interview> interviewPage = interviewService.findFeedbackStats(pageParameters);
-		List<FeedbackStat> returnList = new ArrayList<>(interviewPage.getContent().size());
-		interviewPage.getContent().forEach(inter -> {returnList.add(new FeedbackStat(inter));});
-		// because I am not used to dealing with dto conversions and pages
-		// some of the metadata in PageImpl may be wrong.
-		return new PageImpl<FeedbackStat>(returnList);
+		return interviewService.findFeedbackStats(pageParameters);
 	}
 
 	@GetMapping("reports/interview24")

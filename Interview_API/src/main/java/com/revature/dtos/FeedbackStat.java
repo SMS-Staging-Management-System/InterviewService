@@ -12,8 +12,10 @@ public class FeedbackStat {
 	private Date feedbackRequested;
 	private Date feedbackRecieved;
 	private Date feedbackDelivered;
+	private String managerName;
+	private String associateName;
 	
-	public FeedbackStat(Interview interview) {
+	public FeedbackStat(Interview interview, String managerName, String associateName) {
 		super();
 		this.id = interview.getId();
 		this.managerEmail = interview.getManagerEmail();
@@ -21,53 +23,84 @@ public class FeedbackStat {
 		this.feedbackRequested = interview.getFeedback().getFeedbackRequested();
 		this.feedbackRecieved = interview.getFeedback().getFeedbackReceived();
 		this.feedbackDelivered = interview.getFeedback().getFeedbackDelivered();
+		this.managerName = managerName;
+		this.associateName = associateName;
 	}
 	
 	public FeedbackStat() {
 		super();
 	}
+
 	public int getId() {
 		return id;
 	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	public String getManagerEmail() {
 		return managerEmail;
 	}
+
 	public void setManagerEmail(String managerEmail) {
 		this.managerEmail = managerEmail;
 	}
+
 	public String getAssociateEmail() {
 		return associateEmail;
 	}
+
 	public void setAssociateEmail(String associateEmail) {
 		this.associateEmail = associateEmail;
 	}
+
 	public Date getFeedbackRequested() {
 		return feedbackRequested;
 	}
+
 	public void setFeedbackRequested(Date feedbackRequested) {
 		this.feedbackRequested = feedbackRequested;
 	}
+
 	public Date getFeedbackRecieved() {
 		return feedbackRecieved;
 	}
+
 	public void setFeedbackRecieved(Date feedbackRecieved) {
 		this.feedbackRecieved = feedbackRecieved;
 	}
+
 	public Date getFeedbackDelivered() {
 		return feedbackDelivered;
 	}
+
 	public void setFeedbackDelivered(Date feedbackDelivered) {
 		this.feedbackDelivered = feedbackDelivered;
+	}
+
+	public String getManagerName() {
+		return managerName;
+	}
+
+	public void setManagerName(String managerName) {
+		this.managerName = managerName;
+	}
+
+	public String getAssociateName() {
+		return associateName;
+	}
+
+	public void setAssociateName(String associateName) {
+		this.associateName = associateName;
 	}
 
 	@Override
 	public String toString() {
 		return "FeedbackStat [id=" + id + ", managerEmail=" + managerEmail + ", associateEmail=" + associateEmail
 				+ ", feedbackRequested=" + feedbackRequested + ", feedbackRecieved=" + feedbackRecieved
-				+ ", feedbackDelivered=" + feedbackDelivered + "]";
+				+ ", feedbackDelivered=" + feedbackDelivered + ", managerName=" + managerName + ", associateName="
+				+ associateName + "]";
 	}
 
 	@Override
@@ -75,11 +108,13 @@ public class FeedbackStat {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((associateEmail == null) ? 0 : associateEmail.hashCode());
+		result = prime * result + ((associateName == null) ? 0 : associateName.hashCode());
 		result = prime * result + ((feedbackDelivered == null) ? 0 : feedbackDelivered.hashCode());
 		result = prime * result + ((feedbackRecieved == null) ? 0 : feedbackRecieved.hashCode());
 		result = prime * result + ((feedbackRequested == null) ? 0 : feedbackRequested.hashCode());
 		result = prime * result + id;
 		result = prime * result + ((managerEmail == null) ? 0 : managerEmail.hashCode());
+		result = prime * result + ((managerName == null) ? 0 : managerName.hashCode());
 		return result;
 	}
 
@@ -96,6 +131,11 @@ public class FeedbackStat {
 			if (other.associateEmail != null)
 				return false;
 		} else if (!associateEmail.equals(other.associateEmail))
+			return false;
+		if (associateName == null) {
+			if (other.associateName != null)
+				return false;
+		} else if (!associateName.equals(other.associateName))
 			return false;
 		if (feedbackDelivered == null) {
 			if (other.feedbackDelivered != null)
@@ -119,9 +159,14 @@ public class FeedbackStat {
 				return false;
 		} else if (!managerEmail.equals(other.managerEmail))
 			return false;
+		if (managerName == null) {
+			if (other.managerName != null)
+				return false;
+		} else if (!managerName.equals(other.managerName))
+			return false;
 		return true;
 	}
-	
+
 	
 	
 }
