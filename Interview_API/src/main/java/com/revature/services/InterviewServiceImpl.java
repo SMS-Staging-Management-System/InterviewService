@@ -501,4 +501,14 @@ public class InterviewServiceImpl implements InterviewService {
 		
 		return interviewRepo.findByScheduledBetween(first, last);
 	}
+
+	@Override
+	public List<Interview> findFeedbackStats() {
+		return interviewRepo.findByFeedbackIsNotNull();
+	}
+
+	@Override
+	public Page<Interview> findFeedbackStats(Pageable page) {
+		return ListToPage.getPage(interviewRepo.findByFeedbackIsNotNullOrderByFeedbackFeedbackRequested(), page);
+	}
 }

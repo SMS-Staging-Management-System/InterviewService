@@ -50,4 +50,6 @@ public interface InterviewService {
 	Interview markReviewed(int interviewId);
 	List<Interview> findByScheduledWeek(Date date);
 	InterviewFormat findFormatById(Integer id);
+	List<Interview> findFeedbackStats();
+	Page<Interview> findFeedbackStats(Pageable page);
 }
