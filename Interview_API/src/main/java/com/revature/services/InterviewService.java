@@ -39,6 +39,7 @@ public interface InterviewService {
 	List<Integer> getInterviewsWithin24HourNoticeAssociate();
 	List<Integer> getInterviewsWithin24HourNoticeManager();
 	Interview setFeedback(FeedbackData fm);
+	InterviewFeedback updateFeedback(Integer i, FeedbackData f);
 	List<User> getAssociateNeedFeedback();
 	Page<User> getAssociateNeedFeedback(Pageable page);
 	List<Interview24Hour> getAll24HourNotice();
