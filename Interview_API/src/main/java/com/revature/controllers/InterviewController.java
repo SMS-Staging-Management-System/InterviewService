@@ -10,6 +10,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.FeedbackData;
@@ -32,8 +34,11 @@ import com.revature.models.InterviewFormat;
 import com.revature.models.FeedbackStatus;
 import com.revature.models.AssociateInput;
 import com.revature.services.AssociateInputService;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.netflix.ribbon.proxy.annotation.Var;
 import com.revature.dtos.NewInterviewData;
+import com.revature.dtos.UserDto;
 import com.revature.feign.IUserClient;
 import com.revature.models.User;
 import com.revature.dtos.AssociateInterview;
@@ -48,9 +53,6 @@ public class InterviewController {
 
 	@Autowired
 	private InterviewService interviewService;
-	@Autowired
-	private AssociateInputService associateInputService;
-	
 	@GetMapping
 	public List<Interview> findAll() {
 		return interviewService.findAll();
@@ -178,6 +180,10 @@ public class InterviewController {
 	public List<AssociateInterview> getInterviewsPerAssociate() {
         return interviewService.findInterviewsPerAssociate();
     }
+	@GetMapping("dashboard/interviews/associate/fiveormore")
+	public List<AssociateInterview> getAssociatesWithFiveOrMore() {
+        return interviewService.getAssociatesWithFiveOrMore();
+    }
 	
 	@GetMapping("reports/InterviewsPerAssociate/page")
 	public Page<AssociateInterview> getInterviewsPerAssociatePaged(
@@ -257,6 +263,13 @@ public class InterviewController {
 		// Epoch dates are easier to pass, so use epoch date and set date using that
 		Date date = new Date(epochDate);
 		return interviewService.findByScheduledWeek(date);
+	}
+	
+	@GetMapping(value = "email/{email}") 
+	public ResponseEntity<String> findByEmail(@PathVariable String email) {
+		UserDto user = interviewService.findByEmail(email);
+		
+		return new ResponseEntity<String>(user.toString(), HttpStatus.OK);
 	}
   }
 
