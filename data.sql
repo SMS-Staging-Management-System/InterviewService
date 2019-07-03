@@ -21,12 +21,12 @@ SET SCHEMA 'interview_service';
 	/*Level 1 Tables*/
 		create table interview_feedback (
 			interview_feedback_id            serial    not null unique,
-			feedback_requested               timestamp not null,
-			feedback                         text      not null,
-			feedback_received                timestamp not null,
+			feedback_requested               timestamp ,
+			feedback                         text      ,
+			feedback_received                timestamp ,
 			feedback_delivered               timestamp,
-			feedback_status                  integer   not null,
-			interview_format				 integer   not null,
+			feedback_status                  integer   ,
+			interview_format				 integer   ,
 			constraint pk_interview_feedback primary key (interview_feedback_id),
 			constraint fk_feedback_status    foreign key (feedback_status) references feedback_status (feedback_status_id),
 			constraint fk_interview_format   foreign key (interview_format) references interview_format (interview_format_id)

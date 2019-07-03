@@ -214,9 +214,49 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 
 	public Interview setFeedback(FeedbackData f) {
-		FeedbackStatus status = this.findStatusById(f.getStatusId());
-		InterviewFormat format = this.findFormatById(f.getFormat());
-		InterviewFeedback interviewFeedback = new InterviewFeedback(0, new Date(f.getFeedbackRequestedDate()), f.getFeedbackText(), new Date(f.getFeedbackReceivedDate()), new Date(f.getFeedbackDeliveredDate()), status, format);
+		FeedbackStatus status;
+		InterviewFormat format;
+		Date reqDate;
+		String fText;
+		Date recDate;
+		Date delDate;
+		if(f.getStatusId() == 0) {
+			status = this.findStatusById(1);
+		}
+		else {
+			status = this.findStatusById(f.getStatusId());
+		}
+		if(f.getFormat() == 0) {
+			format = null;
+		}
+		else {
+			format = this.findFormatById(f.getFormat());
+		}
+		if(f.getFeedbackRequestedDate() == 0) {
+			reqDate = null;
+		}
+		else {
+			reqDate = new Date(f.getFeedbackRequestedDate());
+		}
+		if(f.getFeedbackText() == null) {
+			fText = null;
+		}
+		else {
+			fText = f.getFeedbackText();
+		}
+		if(f.getFeedbackReceivedDate() == 0) {
+			recDate = null;
+		}
+		else {
+			recDate = new Date(f.getFeedbackReceivedDate());
+		}
+		if(f.getFeedbackDeliveredDate() == 0) {
+			delDate = null;
+		}
+		else {
+			delDate = new Date(f.getFeedbackDeliveredDate());
+		}
+		InterviewFeedback interviewFeedback = new InterviewFeedback(0, reqDate, fText, recDate, delDate, status, format);
 		Interview i = this.findById(f.getInterviewId());
 		if(i != null) {
 			interviewFeedback = feedbackRepo.save(interviewFeedback);
@@ -226,6 +266,56 @@ public class InterviewServiceImpl implements InterviewService {
 		else 
 			return null;
   }
+	
+	public InterviewFeedback updateFeedback(Integer i, FeedbackData f) {
+		FeedbackStatus status;
+		InterviewFormat format;
+		Date reqDate;
+		String fText;
+		Date recDate;
+		Date delDate;
+		if(f.getStatusId() == 0) {
+			status = this.findStatusById(1);
+		}
+		else {
+			status = this.findStatusById(f.getStatusId());
+		}
+		if(f.getFormat() == 0) {
+			format = null;
+		}
+		else {
+			format = this.findFormatById(f.getFormat());
+		}
+		if(f.getFeedbackRequestedDate() == 0) {
+			reqDate = null;
+		}
+		else {
+			reqDate = new Date(f.getFeedbackRequestedDate());
+		}
+		if(f.getFeedbackText() == null) {
+			fText = null;
+		}
+		else {
+			fText = f.getFeedbackText();
+		}
+		if(f.getFeedbackReceivedDate() == 0) {
+			recDate = null;
+		}
+		else {
+			recDate = new Date(f.getFeedbackReceivedDate());
+		}
+		if(f.getFeedbackDeliveredDate() == 0) {
+			delDate = null;
+		}
+		else {
+			delDate = new Date(f.getFeedbackDeliveredDate());
+		}
+		InterviewFeedback interviewFeedback = new InterviewFeedback(i, reqDate, fText, recDate, delDate, status, format);
+		interviewFeedback = feedbackRepo.save(interviewFeedback);
+		return interviewFeedback;
+		
+		
+	}
   
 	@Override
 	public List<User> getAssociateNeedFeedback() {
