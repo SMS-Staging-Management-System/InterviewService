@@ -11,11 +11,9 @@ import com.revature.models.Interview;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.FeedbackData;
 import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
-import com.revature.models.Interview;
 import com.revature.models.InterviewFeedback;
 import com.revature.models.InterviewFormat;
 import com.revature.models.User;
