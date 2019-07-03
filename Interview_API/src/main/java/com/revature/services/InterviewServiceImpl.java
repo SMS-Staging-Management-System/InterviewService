@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ import com.revature.dtos.InterviewAssociateJobData;
 import com.revature.dtos.NewAssociateInput;
 import com.revature.dtos.NewInterviewData;
 import com.revature.exceptions.ResourceNotFoundException;
+import com.revature.dtos.UserDto;
 import com.revature.feign.IUserClient;
 import com.revature.models.AssociateInput;
 import com.revature.models.Client;
@@ -163,7 +165,29 @@ public class InterviewServiceImpl implements InterviewService {
 		PageImpl PI = ListToPage.getPage(findInterviewsPerAssociate(), page);
 		return PI;
 	}
-
+	@Override
+	public UserDto findByEmail(String email) {
+		User U = (User)userClient.findByEmail(email).getBody();
+		UserDto user = new UserDto();
+		user.setFirstName(U.getFirstName());
+		user.setLastName(U.getLastName());
+		user.setEmail(U.getEmail());
+		user.setPhoneNumber(U.getPhoneNumber());
+		user.setUserId(U.getUserId());
+		return user;
+	}
+	
+	//Method for the Dashboard depends in the method on top to get all the interview count
+	//this method returns only associates with 5 interviews or more using streams.
+	@Override
+	public List<AssociateInterview> getAssociatesWithFiveOrMore() {
+		List<AssociateInterview> associates = findInterviewsPerAssociate();
+		
+		return associates.stream()
+				.filter((a)->a.getInterviewCount()>4)
+				.collect(Collectors.toList());
+	}
+	
 	@Override
 	public Interview findById(Integer id) {
 		
