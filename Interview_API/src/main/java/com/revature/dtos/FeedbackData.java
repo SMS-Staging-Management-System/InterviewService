@@ -16,6 +16,7 @@ public class FeedbackData{
 	}
 	public FeedbackData(int interviewId, long feedbackRequestedDate, String feedbackText, long feedbackReceivedDate,
 			long feedbackDeliveredDate, int statusId, int format) {
+
 		super();
 		this.interviewId = interviewId;
 		this.feedbackRequestedDate = feedbackRequestedDate;
@@ -74,6 +75,7 @@ public class FeedbackData{
 				+ ", feedbackText=" + feedbackText + ", feedbackReceivedDate=" + feedbackReceivedDate
 				+ ", feedbackDeliveredDate=" + feedbackDeliveredDate + ", statusId=" + statusId + ", format=" + format + "]";
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -82,11 +84,13 @@ public class FeedbackData{
 		result = prime * result + (int) (feedbackReceivedDate ^ (feedbackReceivedDate >>> 32));
 		result = prime * result + (int) (feedbackRequestedDate ^ (feedbackRequestedDate >>> 32));
 		result = prime * result + ((feedbackText == null) ? 0 : feedbackText.hashCode());
+
 		result = prime * result + format;
 		result = prime * result + interviewId;
 		result = prime * result + statusId;
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -116,5 +120,5 @@ public class FeedbackData{
 		return true;
 	}
     
-	
+
 }
