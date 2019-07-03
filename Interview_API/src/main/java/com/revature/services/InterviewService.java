@@ -7,6 +7,7 @@ import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.NewAssociateInput;
 import com.revature.dtos.NewInterviewData;
 import com.revature.models.FeedbackStatus;
+import com.revature.dtos.UserDto;
 import com.revature.models.Interview;
 
 import org.springframework.data.domain.Page;
@@ -50,4 +51,6 @@ public interface InterviewService {
 	List<Interview> findByScheduledWeek(Date date);
 	InterviewFormat findFormatById(Integer id);
 	Page<FeedbackStat> findFeedbackStats(Pageable page);
+	List<AssociateInterview> getAssociatesWithFiveOrMore();
+	UserDto findByEmail(String email);
 }

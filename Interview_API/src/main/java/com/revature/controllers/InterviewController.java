@@ -27,6 +27,7 @@ import com.revature.dtos.InterviewAssociateJobData;
 import com.revature.models.Interview;
 import com.revature.models.InterviewFeedback;
 import com.revature.dtos.NewInterviewData;
+import com.revature.dtos.UserDto;
 import com.revature.feign.IUserClient;
 import com.revature.models.User;
 import com.revature.dtos.NewAssociateInput;
@@ -38,7 +39,7 @@ public class InterviewController {
 
 	@Autowired
 	private InterviewService interviewService;
-	
+
 	@GetMapping
 	public List<Interview> findAll() {
 		return interviewService.findAll();
@@ -163,6 +164,10 @@ public class InterviewController {
 	public List<AssociateInterview> getInterviewsPerAssociate() {
         return interviewService.findInterviewsPerAssociate();
     }
+	@GetMapping("dashboard/interviews/associate/fiveormore")
+	public List<AssociateInterview> getAssociatesWithFiveOrMore() {
+        return interviewService.getAssociatesWithFiveOrMore();
+    }
 	
 	@GetMapping("reports/InterviewsPerAssociate/page")
 	public Page<AssociateInterview> getInterviewsPerAssociatePaged(
@@ -250,6 +255,13 @@ public class InterviewController {
 		// Epoch dates are easier to pass, so use epoch date and set date using that
 		Date date = new Date(epochDate);
 		return interviewService.findByScheduledWeek(date);
+	}
+	
+	@GetMapping(value = "email/{email}") 
+	public ResponseEntity<String> findByEmail(@PathVariable String email) {
+		UserDto user = interviewService.findByEmail(email);
+		
+		return new ResponseEntity<String>(user.toString(), HttpStatus.OK);
 	}
   }
 
