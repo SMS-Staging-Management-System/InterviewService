@@ -6,25 +6,28 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.revature.cognito.constants.CognitoRoles;
 import com.revature.cognito.utils.CognitoUtil;
 import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.FeedbackData;
+import com.revature.dtos.FeedbackStat;
 import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
 import com.revature.dtos.NewAssociateInput;
 import com.revature.dtos.NewInterviewData;
+import com.revature.exceptions.ResourceNotFoundException;
+import com.revature.dtos.UserDto;
 import com.revature.feign.IUserClient;
 import com.revature.models.AssociateInput;
 import com.revature.models.Client;
@@ -94,32 +97,27 @@ public class InterviewServiceImpl implements InterviewService {
 
 
 	public Interview addNewInterview(NewInterviewData i) {
-		try {
-			String managerEmail = cognitoUtil.getRequesterClaims().getEmail();
-			String associateEmail = i.getAssociateEmail();
-			Date scheduled = new Date(i.getDate());// TODO: check this is valid date
-			String location = i.getLocation();
-			String client = i.getClient();
-			
-			Client c = clientRepo.getByClientName(client);
-			
-			if (c == null) {
-				c = new Client(0, client);
-				clientRepo.save(c);
-			}
-			
-
-			Interview newInterview = new Interview(0, managerEmail, associateEmail, scheduled, null, null, location, null, null, c);	
-			return save(newInterview);
-		} catch (Exception e) {
-			System.out.println("exception: " + e);
-			return null;
+		
+		String managerEmail = cognitoUtil.getRequesterClaims().getEmail();
+		String associateEmail = i.getAssociateEmail();
+		Date scheduled = new Date(i.getDate());// TODO: check this is valid date
+		String location = i.getLocation();
+		String client = i.getClient();
+				
+		Client c = clientRepo.getByClientName(client);
+				
+		if (c == null) {
+			c = new Client(0, client);
+			clientRepo.save(c);
 		}
+				
+		Interview newInterview = new Interview(0, managerEmail, associateEmail, scheduled, null, null, location, null, null, c);	
+		
+		return save(newInterview);
 	}
 
 
 	public Page<Interview> findAll(Pageable page) {
-		// TODO Auto-generated method stub
 		return interviewRepo.findAll(page);
 	}
 
@@ -160,21 +158,48 @@ public class InterviewServiceImpl implements InterviewService {
 		return associates;
 	}
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Page<AssociateInterview> findInterviewsPerAssociate(Pageable page) {
 		PageImpl PI = ListToPage.getPage(findInterviewsPerAssociate(), page);
 		return PI;
 	}
-
 	@Override
-	public Interview findById(Integer i) {
-		// TODO Auto-generated method stub
-		Optional<Interview> res = interviewRepo.findById(i);
+	public UserDto findByEmail(String email) {
+		User U = (User)userClient.findByEmail(email).getBody();
+		UserDto user = new UserDto();
+		user.setFirstName(U.getFirstName());
+		user.setLastName(U.getLastName());
+		user.setEmail(U.getEmail());
+		user.setPhoneNumber(U.getPhoneNumber());
+		user.setUserId(U.getUserId());
+		return user;
+	}
+	
+	//Method for the Dashboard depends in the method on top to get all the interview count
+	//this method returns only associates with 5 interviews or more using streams.
+	@Override
+	public List<AssociateInterview> getAssociatesWithFiveOrMore() {
+		List<AssociateInterview> associates = findInterviewsPerAssociate();
+		
+		return associates.stream()
+				.filter((a)->a.getInterviewCount()>4)
+				.collect(Collectors.toList());
+	}
+	
+	@Override
+	public Interview findById(Integer id) {
+		
+		Interview res = null;
+		
 		try {
-			return res.get();
-		} catch(Exception e) {
-			System.out.println("bad");
-			throw e;
+			res = interviewRepo.findById(id).get();
+			
+		} catch(NoSuchElementException e) {
+			
+			throw new ResourceNotFoundException("findById failed to find an interview of id: " + id);
 		}
+		
+		return res;
 	}
 
 	@Override
@@ -192,28 +217,39 @@ public class InterviewServiceImpl implements InterviewService {
     }
 	
 	
-	public InterviewFormat findFormatById(Integer i) {
-		Optional<InterviewFormat> res = interviewFormatRepo.findById(i);
+	public InterviewFormat findFormatById(Integer id) {
+		
+		InterviewFormat res = null;
+
 		try {
-			return res.get();
+			res = interviewFormatRepo.findById(id).get();
+		
+		} catch(NoSuchElementException e) {
+			
+			throw new ResourceNotFoundException("findFormatById failed to find an InterviewFormat of id: " + id);
 		}
-		catch(Exception e) {
-			throw e;
-		}
+		
+		return res;
 	}
 	
 	@Override
-	public FeedbackStatus findStatusById(Integer i) {
-		Optional<FeedbackStatus> res = feedbackStatusRepo.findById(i);
+	public FeedbackStatus findStatusById(Integer id) {
+		
+		FeedbackStatus res = null;
+		
 		try {
-			return res.get();
+			res = feedbackStatusRepo.findById(id).get();
+		
+		} catch(Exception e) {
+			
+			throw new ResourceNotFoundException("findStatusById failed to find a FeedbackStatus of id " + id);
 		}
-		catch(Exception e) {
-			throw e;
-		}
+		
+		return res;
 	}
 
 	public Interview setFeedback(FeedbackData f) {
+
 		FeedbackStatus status;
 		InterviewFormat format;
 		Date reqDate;
@@ -313,8 +349,6 @@ public class InterviewServiceImpl implements InterviewService {
 		InterviewFeedback interviewFeedback = new InterviewFeedback(i, reqDate, fText, recDate, delDate, status, format);
 		interviewFeedback = feedbackRepo.save(interviewFeedback);
 		return interviewFeedback;
-		
-		
 	}
   
 	@Override
@@ -338,6 +372,7 @@ public class InterviewServiceImpl implements InterviewService {
 		return associates;
 	}
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public Page<User> getAssociateNeedFeedback(Pageable page) {
 		PageImpl PI = ListToPage.getPage(getAssociateNeedFeedback(), page);
@@ -376,9 +411,6 @@ public class InterviewServiceImpl implements InterviewService {
 		List<Interview> allUsers = interviewRepo.findAll();
 		//find all interviews where the users were notified in advance
 		ArrayList<Interview> allNotifiedUsers = new ArrayList<Interview>();
-		
-		//count all interviews
-		int countAll = allUsers.size();
 
 		//build a new list iteratively for allNotifiedUsers
 		for (Interview i : allUsers)
@@ -398,7 +430,6 @@ public class InterviewServiceImpl implements InterviewService {
 					Calendar cal = Calendar.getInstance();
 					//Set time on calendar to current receivedNotifications date
 					cal.setTime(i.getScheduled());
-					Date curDate = cal.getTime();
 					//Add 24 Hours to the current date
 					cal.add(Calendar.DATE, -1);
 					//Calculate a new date, one day from the receivedNotifications
@@ -430,9 +461,6 @@ public class InterviewServiceImpl implements InterviewService {
 		List<Interview> allUsers = interviewRepo.findAll();
 		//find all interviews where the users were notified in advance
 		ArrayList<Interview> allNotifiedUsers = new ArrayList<Interview>();
-		
-		//count all interviews
-		int countAll = allUsers.size();
 
 		//build a new list iteratively for allNotifiedUsers
 		for (Interview i : allUsers)
@@ -450,7 +478,6 @@ public class InterviewServiceImpl implements InterviewService {
 					Calendar cal = Calendar.getInstance();
 					//Set time on calendar to current receivedNotifications date
 					cal.setTime(i.getScheduled());
-					Date curDate = cal.getTime();
 					//Add 24 Hours to the current date
 					cal.add(Calendar.DATE, -1);
 					//Calculate a new date, one day from the receivedNotifications
@@ -504,7 +531,8 @@ public class InterviewServiceImpl implements InterviewService {
 		
 		return Data;
 	}
-	
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Page<Interview24Hour> getAll24HourNotice(Pageable page) {
 		PageImpl PI = ListToPage.getPage(getAll24HourNotice(), page);
 		return PI;
@@ -535,7 +563,8 @@ public class InterviewServiceImpl implements InterviewService {
 		
 		return Data;
 	}
-	
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Page<InterviewAssociateJobData> getAllJD(Pageable page) {
 		PageImpl PI = ListToPage.getPage(getAllJD(), page);
 		return PI;
@@ -563,6 +592,7 @@ public class InterviewServiceImpl implements InterviewService {
 		return null;
 	}
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Page<Interview> findAllByAssociateEmail(String email, Pageable page) {
 		PageImpl PI = ListToPage.getPage(interviewRepo.findByAssociateEmail(email), page);
 		return PI;
@@ -590,5 +620,30 @@ public class InterviewServiceImpl implements InterviewService {
 		Date last = cal.getTime();
 		
 		return interviewRepo.findByScheduledBetween(first, last);
+	}
+
+
+	@Override
+	@SuppressWarnings({"unchecked"})
+	public Page<FeedbackStat> findFeedbackStats(Pageable page) {
+		List<Interview> interviewStats = interviewRepo.findByFeedbackIsNotNullOrderByFeedbackFeedbackRequested();
+		List<FeedbackStat> returnList = new ArrayList<>(interviewStats.size());
+		interviewStats.forEach(inter -> {
+			String mName = "";
+			String aName = "";
+			try {
+				User manag = userClient.findByEmail(inter.getManagerEmail()).getBody();
+				User assoc = userClient.findByEmail(inter.getAssociateEmail()).getBody();
+				mName = manag.getFirstName() + " " + manag.getLastName();
+				aName = assoc.getFirstName() + " " + assoc.getLastName();
+			} catch(Exception e){
+				System.out.println(e);
+			} finally {
+				returnList.add(new FeedbackStat(inter, mName.trim(), aName.trim()));
+			}
+			});
+		// because I am not used to dealing with dto conversions and pages
+		// some of the metadata in PageImpl may be wrong.
+		return ListToPage.getPage(returnList, page);
 	}
 }
