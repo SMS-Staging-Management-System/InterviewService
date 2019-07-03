@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.FeedbackData;
-import com.revature.dtos.FeedbackStat;
 import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
 import com.revature.models.Interview;
@@ -122,10 +120,13 @@ public class InterviewController {
 	
 	@PostMapping("/new")
 	public ResponseEntity<Interview> addNewInterview(@Valid @RequestBody NewInterviewData i) {
-		
 		Interview returnedInterview = interviewService.addNewInterview(i);
-		
-		return ResponseEntity.ok(returnedInterview);
+		if(returnedInterview != null) {
+			return ResponseEntity.ok(returnedInterview);
+		}
+		else {
+			return new ResponseEntity<Interview>(HttpStatus.BAD_REQUEST);
+		}
 	}
   
 	@Autowired
@@ -165,7 +166,7 @@ public class InterviewController {
 	public ResponseEntity<Interview> updateInterviewFeedback(@Valid @RequestBody FeedbackData f) {
 		Interview result = interviewService.setFeedback(f);
 		if(result != null) {
-			return ResponseEntity.ok(result);
+			return ResponseEntity.ok(interviewService.setFeedback(f));
 		}
 		return new ResponseEntity<Interview>(HttpStatus.BAD_REQUEST);
 	}
@@ -211,14 +212,6 @@ public class InterviewController {
         return interviewService.getAssociateNeedFeedback(pageParameters);
     }
 	
-	@GetMapping("reports/FeedbackStats/page")
-	public Page<FeedbackStat> getAllFeedbackStats(
-			@RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
-			@RequestParam(name="pageSize", defaultValue="5") Integer pageSize
-			) {
-		Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
-		return interviewService.findFeedbackStats(pageParameters);
-	}
 
 	@GetMapping("reports/interview24")
 	public List<Interview24Hour> getAll24HourNotice() {
@@ -272,7 +265,7 @@ public class InterviewController {
 		return interviewService.findByScheduledWeek(date);
 	}
 	
-	@GetMapping(value = "email/{email}") 
+	@GetMapping(value = "email/{email}", produces = "application/json; charset=UTF-8") 
 	public ResponseEntity<String> findByEmail(@PathVariable String email) {
 		UserDto user = interviewService.findByEmail(email);
 		

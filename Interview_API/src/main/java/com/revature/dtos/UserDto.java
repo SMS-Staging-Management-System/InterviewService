@@ -116,10 +116,11 @@ public class UserDto {
 	@Override
 	public String toString() {
 		return "{" +
-		" userId='" + this.getUserId() + "'" +
-		", firstName='" + this.getFirstName() + "'" +
-		", lastName='" + this.getLastName() + "'" +
-		", email='" + this.getEmail() + "'" +
+		" \"userId\":\"" + this.getUserId() + "\"" +
+		", \"firstName\":\"" + this.getFirstName() + "\"" +
+		", \"lastName\":\"" + this.getLastName() + "\"" +
+		", \"email\":\"" + this.getEmail() + "\"" +
+		", \"phoneNumber\":\"" + this.getPhoneNumber() + "\"" +
 		"}";
 	}
 	
