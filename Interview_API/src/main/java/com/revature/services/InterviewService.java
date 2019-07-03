@@ -12,6 +12,7 @@ import com.revature.models.Interview;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.revature.dtos.FeedbackData;
+import com.revature.dtos.FeedbackStat;
 import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
 import com.revature.models.InterviewFeedback;
@@ -48,4 +49,5 @@ public interface InterviewService {
 	Interview markReviewed(int interviewId);
 	List<Interview> findByScheduledWeek(Date date);
 	InterviewFormat findFormatById(Integer id);
+	Page<FeedbackStat> findFeedbackStats(Pageable page);
 }
