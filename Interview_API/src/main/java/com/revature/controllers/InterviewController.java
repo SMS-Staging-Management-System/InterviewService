@@ -13,11 +13,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.FeedbackData;
@@ -161,6 +163,15 @@ public class InterviewController {
 	public InterviewFeedback getInterviewFeedbackByInterviewID(@PathVariable int InterviewId) {
 		return interviewService.getInterviewFeedbackByInterviewID(InterviewId);
   }
+	
+	@PatchMapping("Feedback/InterviewId/{InterviewId}")
+	public ResponseEntity<InterviewFeedback> editInterviewFeedbackByInterviewId(@PathVariable int InterviewId, @Valid @RequestBody FeedbackData f) {
+		InterviewFeedback result = interviewService.updateFeedback(InterviewId,f);
+		if(result != null) {
+			return ResponseEntity.ok(result);
+		}
+		return new ResponseEntity<InterviewFeedback>(HttpStatus.BAD_REQUEST);
+	}
   
 	@GetMapping("reports/InterviewsPerAssociate")
 	public List<AssociateInterview> getInterviewsPerAssociate() {
