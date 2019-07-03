@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.revature.cognito.constants.CognitoRoles;
@@ -120,7 +118,6 @@ public class InterviewServiceImpl implements InterviewService {
 
 
 	public Page<Interview> findAll(Pageable page) {
-		// TODO Auto-generated method stub
 		return interviewRepo.findAll(page);
 	}
 
@@ -161,6 +158,7 @@ public class InterviewServiceImpl implements InterviewService {
 		return associates;
 	}
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Page<AssociateInterview> findInterviewsPerAssociate(Pageable page) {
 		PageImpl PI = ListToPage.getPage(findInterviewsPerAssociate(), page);
 		return PI;
@@ -286,6 +284,7 @@ public class InterviewServiceImpl implements InterviewService {
 		return associates;
 	}
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public Page<User> getAssociateNeedFeedback(Pageable page) {
 		PageImpl PI = ListToPage.getPage(getAssociateNeedFeedback(), page);
@@ -324,9 +323,6 @@ public class InterviewServiceImpl implements InterviewService {
 		List<Interview> allUsers = interviewRepo.findAll();
 		//find all interviews where the users were notified in advance
 		ArrayList<Interview> allNotifiedUsers = new ArrayList<Interview>();
-		
-		//count all interviews
-		int countAll = allUsers.size();
 
 		//build a new list iteratively for allNotifiedUsers
 		for (Interview i : allUsers)
@@ -346,7 +342,6 @@ public class InterviewServiceImpl implements InterviewService {
 					Calendar cal = Calendar.getInstance();
 					//Set time on calendar to current receivedNotifications date
 					cal.setTime(i.getScheduled());
-					Date curDate = cal.getTime();
 					//Add 24 Hours to the current date
 					cal.add(Calendar.DATE, -1);
 					//Calculate a new date, one day from the receivedNotifications
@@ -378,9 +373,6 @@ public class InterviewServiceImpl implements InterviewService {
 		List<Interview> allUsers = interviewRepo.findAll();
 		//find all interviews where the users were notified in advance
 		ArrayList<Interview> allNotifiedUsers = new ArrayList<Interview>();
-		
-		//count all interviews
-		int countAll = allUsers.size();
 
 		//build a new list iteratively for allNotifiedUsers
 		for (Interview i : allUsers)
@@ -398,7 +390,6 @@ public class InterviewServiceImpl implements InterviewService {
 					Calendar cal = Calendar.getInstance();
 					//Set time on calendar to current receivedNotifications date
 					cal.setTime(i.getScheduled());
-					Date curDate = cal.getTime();
 					//Add 24 Hours to the current date
 					cal.add(Calendar.DATE, -1);
 					//Calculate a new date, one day from the receivedNotifications
@@ -452,7 +443,8 @@ public class InterviewServiceImpl implements InterviewService {
 		
 		return Data;
 	}
-	
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Page<Interview24Hour> getAll24HourNotice(Pageable page) {
 		PageImpl PI = ListToPage.getPage(getAll24HourNotice(), page);
 		return PI;
@@ -483,7 +475,8 @@ public class InterviewServiceImpl implements InterviewService {
 		
 		return Data;
 	}
-	
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Page<InterviewAssociateJobData> getAllJD(Pageable page) {
 		PageImpl PI = ListToPage.getPage(getAllJD(), page);
 		return PI;
@@ -511,6 +504,7 @@ public class InterviewServiceImpl implements InterviewService {
 		return null;
 	}
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Page<Interview> findAllByAssociateEmail(String email, Pageable page) {
 		PageImpl PI = ListToPage.getPage(interviewRepo.findByAssociateEmail(email), page);
 		return PI;
@@ -542,6 +536,7 @@ public class InterviewServiceImpl implements InterviewService {
 
 
 	@Override
+	@SuppressWarnings({"unchecked"})
 	public Page<FeedbackStat> findFeedbackStats(Pageable page) {
 		List<Interview> interviewStats = interviewRepo.findByFeedbackIsNotNullOrderByFeedbackFeedbackRequested();
 		List<FeedbackStat> returnList = new ArrayList<>(interviewStats.size());

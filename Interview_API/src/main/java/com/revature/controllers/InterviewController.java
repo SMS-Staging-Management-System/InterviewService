@@ -1,19 +1,14 @@
 package com.revature.controllers;
 
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Arrays;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.FeedbackData;
@@ -32,21 +26,11 @@ import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
 import com.revature.models.Interview;
 import com.revature.models.InterviewFeedback;
-import com.revature.models.InterviewFormat;
-import com.revature.models.FeedbackStatus;
-import com.revature.models.AssociateInput;
-import com.revature.services.AssociateInputService;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.netflix.ribbon.proxy.annotation.Var;
 import com.revature.dtos.NewInterviewData;
 import com.revature.dtos.UserDto;
 import com.revature.feign.IUserClient;
 import com.revature.models.User;
-import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.NewAssociateInput;
-import com.revature.models.Interview;
-import com.revature.services.AssociateInputService;
 import com.revature.services.InterviewService;
 
 @RestController
@@ -55,6 +39,7 @@ public class InterviewController {
 
 	@Autowired
 	private InterviewService interviewService;
+
 	@GetMapping
 	public List<Interview> findAll() {
 		return interviewService.findAll();
