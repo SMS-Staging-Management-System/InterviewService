@@ -36,6 +36,8 @@ public interface InterviewService {
 	Page<Interview> findAllByAssociateEmail(String email, Pageable page);
 	List<AssociateInterview> findInterviewsPerAssociate();
 	Page<AssociateInterview> findInterviewsPerAssociate(Pageable page);
+	List<AssociateInterview> getAssociatesWithFiveOrMore();
+	Page<AssociateInterview> getAssociatesWithFiveOrMore(Pageable page);
 	List<Integer> getInterviewsWithin24HourNoticeAssociate();
 	List<Integer> getInterviewsWithin24HourNoticeManager();
 	Interview setFeedback(FeedbackData fm);
@@ -52,6 +54,5 @@ public interface InterviewService {
 	List<Interview> findByScheduledWeek(Date date);
 	InterviewFormat findFormatById(Integer id);
 	Page<FeedbackStat> findFeedbackStats(Pageable page);
-	List<AssociateInterview> getAssociatesWithFiveOrMore();
 	UserDto findByEmail(String email);
 }

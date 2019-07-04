@@ -195,6 +195,15 @@ public class InterviewController {
         
         return interviewService.findInterviewsPerAssociate(pageParameters);
     }
+	@GetMapping("dashboard/interviews/associate/fiveormore/page")
+	public Page<AssociateInterview> getAssociatesWithFiveOrMorePaged(
+		@RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
+        @RequestParam(name="pageSize", defaultValue="5") Integer pageSize) {
+		// Example url call: ~:8091/reports/InterviewsPerAssociate/page?pageNumber=0&pageSize=3
+		// The above url will return the 0th page of size 3.
+	    Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
+        return interviewService.getAssociatesWithFiveOrMore(pageParameters);
+    }
 
 	@GetMapping("reports/AssociateNeedFeedback")
 	public List<User> getAssociateNeedFeedback() {

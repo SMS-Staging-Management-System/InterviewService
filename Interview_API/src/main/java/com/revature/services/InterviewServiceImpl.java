@@ -185,6 +185,11 @@ public class InterviewServiceImpl implements InterviewService {
 				.filter((a)->a.getInterviewCount()>4)
 				.collect(Collectors.toList());
 	}
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	public Page<AssociateInterview> getAssociatesWithFiveOrMore(Pageable page) {
+		PageImpl PI = ListToPage.getPage(getAssociatesWithFiveOrMore(), page);
+		return PI;
+	}
 	
 	@Override
 	public Interview findById(Integer id) {
