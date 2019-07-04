@@ -129,7 +129,7 @@ public class InterviewServiceImpl implements InterviewService {
 			AssociateInterview A = new AssociateInterview(I);
 			int index = associates.indexOf(A);
 			System.out.println("New: " + A);
-			if (index > 0) {
+			if (index >= 0) {
 				A = associates.get(index);
 				A.incrementInterviewCount();
 				associates.set(index, A);
