@@ -1,8 +1,11 @@
 package com.revature.dtos;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
+@Entity
 public class UserDto {
-
+	@Id
 	private int userId;
 
 	private String firstName;

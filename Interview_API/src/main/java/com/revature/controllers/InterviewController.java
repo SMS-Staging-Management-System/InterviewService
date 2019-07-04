@@ -1,12 +1,15 @@
 package com.revature.controllers;
 
 import java.util.List;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -262,11 +265,25 @@ public class InterviewController {
 		return interviewService.findByScheduledWeek(date);
 	}
 	
-	@GetMapping(value = "email/{email}", produces = "application/json; charset=UTF-8") 
-	public ResponseEntity<String> findByEmail(@PathVariable String email) {
-		UserDto user = interviewService.findByEmail(email);
+	@GetMapping(value = "email/{email:.+}") 
+	public ResponseEntity<UserDto> findByEmail(@PathVariable String email) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", "application/json");
+
+		UserDto user = null;
+		HttpStatus resultStatus = HttpStatus.OK;
+		try {
+			user = interviewService.findByEmail(email);
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		if (user == null) {
+			resultStatus = HttpStatus.NOT_FOUND;
+		}
 		
-		return new ResponseEntity<String>(user.toString(), HttpStatus.OK);
+		return new ResponseEntity<UserDto>(user,headers,resultStatus);
 	}
   }
 
