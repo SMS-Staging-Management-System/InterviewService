@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -32,6 +33,7 @@ import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
 import com.revature.dtos.NewAssociateInput;
 import com.revature.dtos.NewInterviewData;
+import com.revature.dtos.NumberOfInterviewsCount;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.dtos.UserDto;
 import com.revature.feign.IUserClient;
@@ -205,6 +207,25 @@ public class InterviewServiceImpl implements InterviewService {
 		PageImpl PI = ListToPage.getPage(findInterviewsPerAssociate(), page);
 		return PI;
 	}
+	
+	@Override
+	public NumberOfInterviewsCount findAssociateInterviewsData() {
+		List<AssociateInterview> interviewsPerAssociate = findInterviewsPerAssociate();
+		HashMap<String, Integer> maxHolder = new HashMap<>();
+		maxHolder.put("max", 0);
+		interviewsPerAssociate.forEach(stat -> {
+			if(stat.getInterviewCount() > maxHolder.get("max")) {
+				maxHolder.put("max", stat.getInterviewCount());
+			}
+		});
+		int[] counts = new int[maxHolder.get("max").intValue() + 1];
+		interviewsPerAssociate.forEach(stat -> {
+			int index = stat.getInterviewCount();
+			counts[index]++;
+		});
+		return new NumberOfInterviewsCount(interviewsPerAssociate.size(), counts);
+	}
+	
 	@Override
 	public UserDto findByEmail(String email) {
 		User U = (User)userClient.findByEmail(email).getBody();
@@ -721,4 +742,5 @@ public class InterviewServiceImpl implements InterviewService {
 		return ListToPage.getPage(returnList, page);
 
 	}
+
 }

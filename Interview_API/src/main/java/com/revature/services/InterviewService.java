@@ -6,6 +6,7 @@ import java.util.List;
 import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.NewAssociateInput;
 import com.revature.dtos.NewInterviewData;
+import com.revature.dtos.NumberOfInterviewsCount;
 import com.revature.models.FeedbackStatus;
 import com.revature.dtos.UserDto;
 import com.revature.models.Interview;
@@ -39,6 +40,7 @@ public interface InterviewService {
 	Page<Interview> findAllByAssociateEmail(String email, Pageable page);
 	List<AssociateInterview> findInterviewsPerAssociate();
 	Page<AssociateInterview> findInterviewsPerAssociate(Pageable page);
+	NumberOfInterviewsCount findAssociateInterviewsData();
 	List<AssociateInterview> getAssociatesWithFiveOrMore();
 	Page<AssociateInterview> getAssociatesWithFiveOrMore(Pageable page);
 	List<Integer> getInterviewsWithin24HourNoticeAssociate();

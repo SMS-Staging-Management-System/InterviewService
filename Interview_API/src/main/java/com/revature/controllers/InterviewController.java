@@ -36,6 +36,7 @@ import com.revature.models.FeedbackStatus;
 import com.revature.models.Interview;
 import com.revature.models.InterviewFeedback;
 import com.revature.dtos.NewInterviewData;
+import com.revature.dtos.NumberOfInterviewsCount;
 import com.revature.dtos.UserDto;
 import com.revature.feign.IUserClient;
 import com.revature.models.User;
@@ -267,6 +268,12 @@ public class InterviewController {
         
         return interviewService.findInterviewsPerAssociate(pageParameters);
     }
+	
+	@GetMapping("reports/InterviewsPerAssociate/chart")
+	public NumberOfInterviewsCount getInterviewsPerAccosiateStats() {
+		return interviewService.findAssociateInterviewsData();
+	}
+	
 	@GetMapping("dashboard/interviews/associate/fiveormore/page")
 	public Page<AssociateInterview> getAssociatesWithFiveOrMorePaged(
 		@RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
