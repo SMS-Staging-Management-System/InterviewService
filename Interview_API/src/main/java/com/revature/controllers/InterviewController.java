@@ -270,7 +270,7 @@ public class InterviewController {
     }
 	
 	@GetMapping("reports/InterviewsPerAssociate/chart")
-	public NumberOfInterviewsCount getInterviewsPerAccosiateStats() {
+	public NumberOfInterviewsCount getInterviewsPerAssociateStats() {
 		return interviewService.findAssociateInterviewsData();
 	}
 	
