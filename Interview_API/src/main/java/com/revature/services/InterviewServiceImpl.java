@@ -683,8 +683,6 @@ public class InterviewServiceImpl implements InterviewService {
 		try {
 			EmailList eList = new EmailList(emailList);
 			ArrayList<com.revature.feign.User> uList = userClient.getUsersByEmails(eList);
-			System.out.println("RESULTS FROM USERCLIENT");
-			uList.forEach(u -> {System.out.println(u);});
 			ArrayList<String> names = new ArrayList<>(2);
 			ArrayList<com.revature.feign.User> users = new ArrayList<>(2);
 			names.add("");
