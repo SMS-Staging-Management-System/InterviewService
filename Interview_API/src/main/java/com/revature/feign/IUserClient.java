@@ -30,9 +30,6 @@ public interface IUserClient {
 	@CognitoAuth(roles = { "staging-manager" })
 	@GetMapping(path = "users/user/email/{email}")
 	public ResponseEntity<com.revature.feign.User> getByEmail(@PathVariable String email);
-	
-	@GetMapping("users/user/{email}")
-	public com.revature.feign.User getUserByEmail(@PathVariable String email);
 
 	@CognitoAuth(roles = { CognitoRoles.STAGING_MANAGER, CognitoRoles.TRAINER })
 	@GetMapping("cohorts/{id}")

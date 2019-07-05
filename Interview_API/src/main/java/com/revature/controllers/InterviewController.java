@@ -65,52 +65,10 @@ public class InterviewController {
 		return iUserClient.findById(id);
 	}
 	
-	@GetMapping("user/email/{email:.+}")
-	public com.revature.feign.User getUserByEmail(@PathVariable String email) {
-		return iUserClient.getUserByEmail(email);
-	}
-	
 	@CognitoAuth(roles = { "staging-manager" })
 	@GetMapping(path = "users/user/email/{email:.+}")
 	public ResponseEntity<com.revature.feign.User> getByEmail(@PathVariable String email){
 		return iUserClient.getByEmail(email);
-	}
-	
-	@GetMapping("stage")
-	public List<Interview> getStaging(){
-		//return interviewService.findAllTest();
-//		String email = "hermes243@mail.ru";
-//		com.revature.feign.User user = null;
-//		try {
-//		//user = iUserClient.getUserByEmail(java.net.URLDecoder.decode(email.toLowerCase(), "utf-8"));
-//		user = iUserClient.getUserByEmail(email);
-//		} catch(Exception e) {
-//			e.printStackTrace();		
-//		}
-//		return user;	
-		
-		
-		List<Interview> stagingInterviews = interviewService.findAllTest().stream().filter((item) -> {
-        	String assocEmail = item.getAssociateEmail();        	 	
-        	com.revature.feign.User user = null;
-    		try {
-    		user = iUserClient.getUserByEmail(java.net.URLDecoder.decode(assocEmail.toLowerCase(), "utf-8"));
-    		} catch(Exception e) {
-    			e.printStackTrace();		
-    		}
-
-        	if(user != null) {
-        		System.out.println(user.getUserStatus().getSpecificStatus());
-        			if (user.getUserStatus().getSpecificStatus().equals("Staging")) {
-        				return true;
-        			}
-        	}
-        	return false;
-        }).collect(Collectors.toList());
-		
-		return stagingInterviews;
-//		PageImpl interviewsPage = ListToPage.getPage(stagingInterviews, pageable);
-//		return interviewsPage;
 	}
 	
 	@GetMapping("/pages")
@@ -138,14 +96,14 @@ public class InterviewController {
             @RequestParam(name="managerEmail", defaultValue="managerEmail") String managerEmail,
             @RequestParam(name="place", defaultValue="placeName") String place,
             @RequestParam(name="clientName", defaultValue="clientName") String clientName,
-            @RequestParam(name="staging", defaultValue="staging") String staging) {
+            @RequestParam(name="staging", defaultValue="stagingOff") String staging) {
 		// Example url call: ~:8091/interview/page?pageNumber=0&pageSize=3
 		// The above url will return the 0th page of size 3.
 		
 		Sort sorter = new Sort(Sort.Direction.valueOf(direction), orderBy);
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize, sorter);
         
-      if(!staging.equals("staging")) {   	    		
+      if(!staging.equals("stagingOff")) {   	    		
     	//List<Interview> interviewsStaging = interviewService.getInterviewsStaging(); 	
     	List<Interview> interviewsStagingFiltered = interviewService.getInterviewsStaging().stream().filter((item) -> {
     		String associateEmailInputStaging;
@@ -176,7 +134,7 @@ public class InterviewController {
     	
   		PageImpl interviewsPage = ListToPage.getPage(interviewsStagingFiltered, pageParameters);
   		return interviewsPage;
-		}
+		} else {
       
       	String associateEmailInput;
 		String managerEmailInput;
@@ -202,6 +160,7 @@ public class InterviewController {
 				.and(InterviewSpecifications.hasClient(clientNameInput)), pageParameters);
         
 		return pageAssoc;
+		}
     }
 	
 	//returns 2 numbers in a list
