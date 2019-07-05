@@ -1,6 +1,7 @@
 package com.revature.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -40,6 +42,7 @@ import com.revature.models.User;
 import com.revature.dtos.NewAssociateInput;
 import com.revature.services.InterviewService;
 import com.revature.services.InterviewSpecifications;
+import com.revature.utils.ListToPage;
 
 @RestController
 @RequestMapping("interview")
@@ -64,6 +67,49 @@ public class InterviewController {
 	@GetMapping("user/email/{email:.+}")
 	public com.revature.feign.User getUserByEmail(@PathVariable String email) {
 		return iUserClient.getUserByEmail(email);
+	}
+	
+	@CognitoAuth(roles = { "staging-manager" })
+	@GetMapping(path = "users/user/email/{email:.+}")
+	public ResponseEntity<com.revature.feign.User> getByEmail(@PathVariable String email){
+		return iUserClient.getByEmail(email);
+	}
+	
+	@GetMapping("stage")
+	public List<Interview> getStaging(){
+		//return interviewService.findAllTest();
+//		String email = "hermes243@mail.ru";
+//		com.revature.feign.User user = null;
+//		try {
+//		//user = iUserClient.getUserByEmail(java.net.URLDecoder.decode(email.toLowerCase(), "utf-8"));
+//		user = iUserClient.getUserByEmail(email);
+//		} catch(Exception e) {
+//			e.printStackTrace();		
+//		}
+//		return user;	
+		
+		
+		List<Interview> stagingInterviews = interviewService.findAllTest().stream().filter((item) -> {
+        	String assocEmail = item.getAssociateEmail();        	 	
+        	com.revature.feign.User user = null;
+    		try {
+    		user = iUserClient.getUserByEmail(java.net.URLDecoder.decode(assocEmail.toLowerCase(), "utf-8"));
+    		} catch(Exception e) {
+    			e.printStackTrace();		
+    		}
+
+        	if(user != null) {
+        		System.out.println(user.getUserStatus().getSpecificStatus());
+        			if (user.getUserStatus().getSpecificStatus().equals("Staging")) {
+        				return true;
+        			}
+        	}
+        	return false;
+        }).collect(Collectors.toList());
+		
+		return stagingInterviews;
+//		PageImpl interviewsPage = ListToPage.getPage(stagingInterviews, pageable);
+//		return interviewsPage;
 	}
 	
 	@GetMapping("/pages")
@@ -132,12 +178,16 @@ public class InterviewController {
 		Sort sorter = new Sort(Sort.Direction.valueOf(direction), orderBy);
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize, sorter);
         
-//      if(!staging.equals("staging")) {
+      if(!staging.equals("staging")) {
 //			return interviewService.getInterviewsStaging(Specification.where(InterviewSpecifications.hasAssociateEmail(associateEmailInput))
 //					.and(InterviewSpecifications.hasManagerEmail(managerEmailInput))
 //					.and(InterviewSpecifications.hasPlace(placeInput))
 //					.and(InterviewSpecifications.hasClient(clientNameInput)), pageParameters);
-//		}
+    	List<Interview> interviewsStaging = interviewService.getInterviewsStaging();
+    	
+  		PageImpl interviewsPage = ListToPage.getPage(interviewsStaging, pageParameters);
+  		return interviewsPage;
+		}
         
         Page<Interview> pageAssoc = interviewService.findAll(Specification.where(InterviewSpecifications.hasAssociateEmail(associateEmailInput))
 				.and(InterviewSpecifications.hasManagerEmail(managerEmailInput))
