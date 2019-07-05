@@ -230,7 +230,7 @@ public class InterviewController {
 	public ResponseEntity<Interview> updateInterviewFeedback(@Valid @RequestBody FeedbackData f) {
 		Interview result = interviewService.setFeedback(f);
 		if(result != null) {
-			return ResponseEntity.ok(interviewService.setFeedback(f));
+			return ResponseEntity.ok(result);
 		}
 		return new ResponseEntity<Interview>(HttpStatus.BAD_REQUEST);
 	}
