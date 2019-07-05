@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.revature.cognito.annotations.CognitoAuth;
 import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.FeedbackData;
 import com.revature.dtos.Interview24Hour;
@@ -45,10 +47,23 @@ public class InterviewController {
 
 	@Autowired
 	private InterviewService interviewService;
+	
+	@Autowired
+	private IUserClient iUserClient;
 
 	@GetMapping
 	public List<Interview> findAll() {
 		return interviewService.findAll();
+	}
+	
+	@GetMapping("users/{id}")
+	public User findById(@PathVariable("id") int id) {
+		return iUserClient.findById(id);
+	}
+	
+	@GetMapping("user/email/{email:.+}")
+	public com.revature.feign.User getUserByEmail(@PathVariable String email) {
+		return iUserClient.getUserByEmail(email);
 	}
 	
 	@GetMapping("/pages")
