@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,7 @@ import com.revature.feign.IUserClient;
 import com.revature.models.User;
 import com.revature.dtos.NewAssociateInput;
 import com.revature.services.InterviewService;
+import com.revature.services.InterviewSpecifications;
 
 @RestController
 @RequestMapping("interview")
@@ -69,13 +71,66 @@ public class InterviewController {
             @RequestParam(name="orderBy", defaultValue="id") String orderBy,
             @RequestParam(name="direction", defaultValue="ASC") String direction,
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
-            @RequestParam(name="pageSize", defaultValue="5") Integer pageSize) {
+            @RequestParam(name="pageSize", defaultValue="5") Integer pageSize,
+            @RequestParam(name="associateEmail", defaultValue="associateEmail") String associateEmail,
+            @RequestParam(name="managerEmail", defaultValue="managerEmail") String managerEmail,
+            @RequestParam(name="place", defaultValue="placeName") String place,
+            @RequestParam(name="clientName", defaultValue="clientName") String clientName,
+            @RequestParam(name="staging", defaultValue="staging") String staging) {
 		// Example url call: ~:8091/interview/page?pageNumber=0&pageSize=3
 		// The above url will return the 0th page of size 3.
+		
+		System.out.println(associateEmail + ' ' + managerEmail + ' ' + place + ' ' + clientName);
+
+		String associateEmailInput;
+		if(associateEmail.equals("associateEmail")) {
+			associateEmailInput = "%";
+		} else {
+			associateEmailInput = associateEmail;
+		}
+		System.out.println(associateEmailInput);
+
+		String managerEmailInput;
+		if(managerEmail.equals("managerEmail")) {
+			managerEmailInput = "%";
+		} else {
+			managerEmailInput = managerEmail;
+		}
+		System.out.println(managerEmailInput);
+
+		String placeInput;
+		if(place.equals("placeName")) {
+			placeInput = "%";
+		} else {
+			placeInput = place;
+		}
+		System.out.println(placeInput);
+
+		String clientNameInput;
+		if(clientName.equals("clientName")) {
+			clientNameInput = "%";
+		} else {
+			clientNameInput = clientName;
+		}
+		System.out.println(clientNameInput);
+		
 		Sort sorter = new Sort(Sort.Direction.valueOf(direction), orderBy);
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize, sorter);
         
-        return interviewService.findAll(pageParameters);
+//      if(!staging.equals("staging")) {
+//			return interviewService.getInterviewsStaging(Specification.where(InterviewSpecifications.hasAssociateEmail(associateEmailInput))
+//					.and(InterviewSpecifications.hasManagerEmail(managerEmailInput))
+//					.and(InterviewSpecifications.hasPlace(placeInput))
+//					.and(InterviewSpecifications.hasClient(clientNameInput)), pageParameters);
+//		}
+        
+        Page<Interview> pageAssoc = interviewService.findAll(Specification.where(InterviewSpecifications.hasAssociateEmail(associateEmailInput))
+				.and(InterviewSpecifications.hasManagerEmail(managerEmailInput))
+				.and(InterviewSpecifications.hasPlace(placeInput))
+				.and(InterviewSpecifications.hasClient(clientNameInput)), pageParameters);
+        
+		System.out.println(pageAssoc);
+		return pageAssoc;
     }
 	
 	//returns 2 numbers in a list

@@ -5,17 +5,21 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import com.revature.models.StatusHistory;
 import org.springframework.stereotype.Service;
+import org.springframework.data.jpa.domain.Specification;
 
 import com.revature.cognito.constants.CognitoRoles;
 import com.revature.cognito.utils.CognitoUtil;
@@ -119,6 +123,42 @@ public class InterviewServiceImpl implements InterviewService {
 
 	public Page<Interview> findAll(Pageable page) {
 		return interviewRepo.findAll(page);
+	}
+	
+	@Override
+	public Page<Interview> findAll(Specification<Interview> spec, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return interviewRepo.findAll(spec, pageable);
+	}
+	
+	@Override
+	public Page<Interview> getInterviewsStaging(Specification<Interview> spec, Pageable pageable) {
+		// TODO Auto-generated method stub
+		List<Interview> stagingInterviews = interviewRepo.findAll().stream().filter((item) -> {
+
+        	String assocEmail = item.getAssociateEmail();
+        	User user = userClient.findByEmail(assocEmail).getBody();
+
+        	System.out.println(user);
+
+        	if(user != null) {
+        		//StatusHistory statusLatestDate = statusHistory.stream().max(Comparator.comparing(StatusHistory::getStatusStart)).get();
+
+        		//statusHistory.stream().map((statusItem) -> {
+        			//if (user.getUserStatus().getSpecificStatus() == "staging") {
+
+        				return true;
+        				//return statusItem;
+        			//}
+        		//});
+        	}
+
+        	return false;
+        }).collect(Collectors.toList());
+
+		PageImpl interviewsPage = ListToPage.getPage(stagingInterviews, pageable);
+		return interviewsPage;
+		//return stagingInterviews;
 	}
 
 	public List<AssociateInterview> findInterviewsPerAssociate() {

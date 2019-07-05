@@ -9,6 +9,7 @@ import com.revature.dtos.NewInterviewData;
 import com.revature.models.FeedbackStatus;
 import com.revature.dtos.UserDto;
 import com.revature.models.Interview;
+import org.springframework.data.jpa.domain.Specification;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,8 @@ public interface InterviewService {
 	Interview findByManagerEmail(String s);
 	FeedbackStatus findStatusById(Integer id);
 	List<Interview> findAll();
+	Page<Interview> getInterviewsStaging(Specification<Interview> spec, Pageable pageable);
+	Page<Interview> findAll(Specification<Interview> spec, Pageable pageable);
 	Interview addNewInterview(NewInterviewData i);
 	Interview addAssociateInput(NewAssociateInput a);
 	Page<Interview> findAll(Pageable page);
