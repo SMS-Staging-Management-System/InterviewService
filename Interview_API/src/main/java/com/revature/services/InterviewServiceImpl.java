@@ -3,8 +3,10 @@ package com.revature.services;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -24,12 +26,14 @@ import org.springframework.data.jpa.domain.Specification;
 import com.revature.cognito.constants.CognitoRoles;
 import com.revature.cognito.utils.CognitoUtil;
 import com.revature.dtos.AssociateInterview;
+import com.revature.dtos.EmailList;
 import com.revature.dtos.FeedbackData;
 import com.revature.dtos.FeedbackStat;
 import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
 import com.revature.dtos.NewAssociateInput;
 import com.revature.dtos.NewInterviewData;
+import com.revature.dtos.NumberOfInterviewsCount;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.dtos.UserDto;
 import com.revature.feign.IUserClient;
@@ -207,6 +211,25 @@ public class InterviewServiceImpl implements InterviewService {
 		PageImpl PI = ListToPage.getPage(findInterviewsPerAssociate(), page);
 		return PI;
 	}
+	
+	@Override
+	public NumberOfInterviewsCount findAssociateInterviewsData() {
+		List<AssociateInterview> interviewsPerAssociate = findInterviewsPerAssociate();
+		HashMap<String, Integer> maxHolder = new HashMap<>();
+		maxHolder.put("max", 0);
+		interviewsPerAssociate.forEach(stat -> {
+			if(stat.getInterviewCount() > maxHolder.get("max")) {
+				maxHolder.put("max", stat.getInterviewCount());
+			}
+		});
+		int[] counts = new int[maxHolder.get("max").intValue() + 1];
+		interviewsPerAssociate.forEach(stat -> {
+			int index = stat.getInterviewCount();
+			counts[index]++;
+		});
+		return new NumberOfInterviewsCount(interviewsPerAssociate.size(), counts);
+	}
+	
 	@Override
 	public UserDto findByEmail(String email) {
 		User U = (User)userClient.findByEmail(email).getBody();
@@ -676,24 +699,52 @@ public class InterviewServiceImpl implements InterviewService {
 	@SuppressWarnings({"unchecked"})
 	public Page<FeedbackStat> findFeedbackStats(Pageable page) {
 		List<Interview> interviewStats = interviewRepo.findByFeedbackIsNotNullOrderByFeedbackFeedbackRequested();
-		List<FeedbackStat> returnList = new ArrayList<>(interviewStats.size());
+		ArrayList<String> emailList = new ArrayList<>(interviewStats.size() * 2);
+		ArrayList<FeedbackStat> returnList = new ArrayList<>(interviewStats.size());
 		interviewStats.forEach(inter -> {
-			String mName = "";
-			String aName = "";
-			try {
-				User manag = userClient.findByEmail(inter.getManagerEmail()).getBody();
-				User assoc = userClient.findByEmail(inter.getAssociateEmail()).getBody();
-				mName = manag.getFirstName() + " " + manag.getLastName();
-				aName = assoc.getFirstName() + " " + assoc.getLastName();
-			} catch(Exception e){
-				System.out.println(e);
-			} finally {
-				returnList.add(new FeedbackStat(inter, mName.trim(), aName.trim()));
-			}
+			emailList.add(inter.getManagerEmail());
+			emailList.add(inter.getAssociateEmail());
 			});
+		try {
+			EmailList eList = new EmailList(emailList);
+			ArrayList<com.revature.feign.User> uList = userClient.getUsersByEmails(eList);
+			ArrayList<String> names = new ArrayList<>(2);
+			ArrayList<com.revature.feign.User> users = new ArrayList<>(2);
+			names.add("");
+			names.add("");
+			users.add(null);
+			users.add(null);
+			interviewStats.forEach(inter -> {
+				names.set(0, "");
+				names.set(1, "");
+				users.set(0, null);
+				users.set(1, null);
+				uList.forEach(user -> {
+					if(user.getEmail().equals(inter.getManagerEmail())) {
+						users.set(0, user);
+					} else if(user.getEmail().equals(inter.getAssociateEmail())) {
+						users.set(1, user);
+					}
+				});
+				if(users.get(0) != null) {
+					names.set(0, users.get(0).getFirstName() + " " + users.get(0).getLastName());
+				}
+				if(users.get(1) != null) {
+					names.set(1, users.get(1).getFirstName() + " " + users.get(1).getLastName());
+				}
+				returnList.add(new FeedbackStat(inter, names.get(0).trim(), names.get(1).trim()));
+			});
+		} catch (Exception e) {
+			System.out.println(e);
+			returnList.clear();
+			interviewStats.forEach(inter -> {
+				returnList.add(new FeedbackStat(inter, "", ""));
+			});
+		}
 		// because I am not used to dealing with dto conversions and pages
 		// some of the metadata in PageImpl may be wrong.
 		return ListToPage.getPage(returnList, page);
 
 	}
+
 }
