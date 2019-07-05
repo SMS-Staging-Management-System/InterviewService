@@ -102,6 +102,11 @@ public class InterviewServiceImpl implements InterviewService {
 			return interviewRepo.findByAssociateEmail(email);
 		}
 	}
+	
+	@Override
+	public List<Interview> findAllTest() {
+		return interviewRepo.findAll();
+	}
 
 
 	public Interview addNewInterview(NewInterviewData i) {
@@ -136,33 +141,32 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 	
 	@Override
-	public Page<Interview> getInterviewsStaging(Specification<Interview> spec, Pageable pageable) {
+	public List<Interview> getInterviewsStaging() {
 		// TODO Auto-generated method stub
 		List<Interview> stagingInterviews = interviewRepo.findAll().stream().filter((item) -> {
-
-        	String assocEmail = item.getAssociateEmail();
-        	User user = userClient.findByEmail(assocEmail).getBody();
-
-        	System.out.println(user);
+        	String assocEmail = item.getAssociateEmail();        	
+        	
+        	com.revature.feign.User user = null;
+    		try {
+    		//user = userClient.getUserByEmail(java.net.URLDecoder.decode(assocEmail.toLowerCase(), "utf-8"));
+    		user = userClient.getByEmail(assocEmail).getBody();
+    		} catch(Exception e) {
+    			e.printStackTrace();		
+    		}
 
         	if(user != null) {
-        		//StatusHistory statusLatestDate = statusHistory.stream().max(Comparator.comparing(StatusHistory::getStatusStart)).get();
-
-        		//statusHistory.stream().map((statusItem) -> {
-        			//if (user.getUserStatus().getSpecificStatus() == "staging") {
-
+        		System.out.println(user.getUserStatus().getSpecificStatus());
+        			if (user.getUserStatus().getSpecificStatus().equals("Staging")) {
         				return true;
-        				//return statusItem;
-        			//}
-        		//});
+        			}
         	}
-
         	return false;
         }).collect(Collectors.toList());
+		
+		return stagingInterviews;
 
-		PageImpl interviewsPage = ListToPage.getPage(stagingInterviews, pageable);
-		return interviewsPage;
-		//return stagingInterviews;
+//		PageImpl interviewsPage = ListToPage.getPage(stagingInterviews, pageable);
+//		return interviewsPage;
 	}
 
 	public List<AssociateInterview> findInterviewsPerAssociate() {

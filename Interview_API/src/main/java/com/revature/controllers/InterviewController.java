@@ -1,6 +1,8 @@
 package com.revature.controllers;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
@@ -12,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -43,6 +46,7 @@ import com.revature.models.User;
 import com.revature.dtos.NewAssociateInput;
 import com.revature.services.InterviewService;
 import com.revature.services.InterviewSpecifications;
+import com.revature.utils.ListToPage;
 
 @RestController
 @RequestMapping("interview")
@@ -64,9 +68,10 @@ public class InterviewController {
 		return iUserClient.findById(id);
 	}
 	
-	@GetMapping("user/email/{email:.+}")
-	public com.revature.feign.User getUserByEmail(@PathVariable String email) {
-		return iUserClient.getUserByEmail(email);
+	@CognitoAuth(roles = { "staging-manager" })
+	@GetMapping(path = "users/user/email/{email:.+}")
+	public ResponseEntity<com.revature.feign.User> getByEmail(@PathVariable String email){
+		return iUserClient.getByEmail(email);
 	}
 	
 	@GetMapping("/pages")
@@ -94,61 +99,71 @@ public class InterviewController {
             @RequestParam(name="managerEmail", defaultValue="managerEmail") String managerEmail,
             @RequestParam(name="place", defaultValue="placeName") String place,
             @RequestParam(name="clientName", defaultValue="clientName") String clientName,
-            @RequestParam(name="staging", defaultValue="staging") String staging) {
+            @RequestParam(name="staging", defaultValue="stagingOff") String staging) {
 		// Example url call: ~:8091/interview/page?pageNumber=0&pageSize=3
 		// The above url will return the 0th page of size 3.
-		
-		System.out.println(associateEmail + ' ' + managerEmail + ' ' + place + ' ' + clientName);
-
-		String associateEmailInput;
-		if(associateEmail.equals("associateEmail")) {
-			associateEmailInput = "%";
-		} else {
-			associateEmailInput = associateEmail;
-		}
-		System.out.println(associateEmailInput);
-
-		String managerEmailInput;
-		if(managerEmail.equals("managerEmail")) {
-			managerEmailInput = "%";
-		} else {
-			managerEmailInput = managerEmail;
-		}
-		System.out.println(managerEmailInput);
-
-		String placeInput;
-		if(place.equals("placeName")) {
-			placeInput = "%";
-		} else {
-			placeInput = place;
-		}
-		System.out.println(placeInput);
-
-		String clientNameInput;
-		if(clientName.equals("clientName")) {
-			clientNameInput = "%";
-		} else {
-			clientNameInput = clientName;
-		}
-		System.out.println(clientNameInput);
 		
 		Sort sorter = new Sort(Sort.Direction.valueOf(direction), orderBy);
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize, sorter);
         
-//      if(!staging.equals("staging")) {
-//			return interviewService.getInterviewsStaging(Specification.where(InterviewSpecifications.hasAssociateEmail(associateEmailInput))
-//					.and(InterviewSpecifications.hasManagerEmail(managerEmailInput))
-//					.and(InterviewSpecifications.hasPlace(placeInput))
-//					.and(InterviewSpecifications.hasClient(clientNameInput)), pageParameters);
-//		}
+      if(!staging.equals("stagingOff")) {   	    		
+    	//List<Interview> interviewsStaging = interviewService.getInterviewsStaging(); 	
+    	List<Interview> interviewsStagingFiltered = interviewService.getInterviewsStaging().stream().filter((item) -> {
+    		String associateEmailInputStaging;
+    		if(associateEmail.equals("associateEmail")) {
+    			associateEmailInputStaging = ".*";		
+    		} else associateEmailInputStaging = associateEmail;
+      		
+    		String managerEmailInputStaging;
+    		if(managerEmail.equals("managerEmail")) {
+      			managerEmailInputStaging = ".*";
+      		} else managerEmailInputStaging = managerEmail;
+    		
+    		String placeInputStaging;
+      		if(place.equals("placeName")) {
+      			placeInputStaging = ".*"; 		
+      		} else placeInputStaging = place;
+      		
+      		String clientNameInputStaging;
+      		if(clientName.equals("clientName")) {
+      			clientNameInputStaging = ".*";
+      		} else clientNameInputStaging = clientName;
+      		//System.out.println(clientNameInput);
+			 return item.getAssociateEmail().matches(associateEmailInputStaging) 
+					&& item.getManagerEmail().matches(managerEmailInputStaging) 
+					&& item.getPlace().matches(placeInputStaging) 
+					&& item.getClient().getClientName().matches(clientNameInputStaging);
+    	}).collect(Collectors.toList());
+    	
+  		PageImpl interviewsPage = ListToPage.getPage(interviewsStagingFiltered, pageParameters);
+  		return interviewsPage;
+		} else {
+      
+      	String associateEmailInput;
+		String managerEmailInput;
+		String placeInput;
+		String clientNameInput;
+		
+		if(associateEmail.equals("associateEmail")) {
+			associateEmailInput = "%";
+		} else associateEmailInput = associateEmail;
+		if(managerEmail.equals("managerEmail")) {
+			managerEmailInput = "%";
+		} else managerEmailInput = managerEmail;
+		if(place.equals("placeName")) {
+			placeInput = "%";
+		} else placeInput = place;
+		if(clientName.equals("clientName")) {
+			clientNameInput = "%";
+		} else clientNameInput = clientName;
         
         Page<Interview> pageAssoc = interviewService.findAll(Specification.where(InterviewSpecifications.hasAssociateEmail(associateEmailInput))
 				.and(InterviewSpecifications.hasManagerEmail(managerEmailInput))
 				.and(InterviewSpecifications.hasPlace(placeInput))
 				.and(InterviewSpecifications.hasClient(clientNameInput)), pageParameters);
         
-		System.out.println(pageAssoc);
 		return pageAssoc;
+		}
     }
 	
 	//returns 2 numbers in a list

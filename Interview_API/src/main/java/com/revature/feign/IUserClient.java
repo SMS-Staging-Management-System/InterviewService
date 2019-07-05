@@ -25,16 +25,21 @@ public interface IUserClient {
 	@GetMapping("users/{id}")
 	public User findById(@PathVariable("id") int id);
 
-	//@CognitoAuth(roles = { "staging-manager" })
+	@CognitoAuth(roles = { "staging-manager" })
 	@GetMapping(path = "users/email/{email:.+}")
 	public ResponseEntity<User> findByEmail(@PathVariable String email);
 	
+	@CognitoAuth(roles = { "staging-manager" })
+	@GetMapping(path = "users/user/email/{email}")
+	public ResponseEntity<com.revature.feign.User> getByEmail(@PathVariable String email);
+
 	@GetMapping("users/user/{email}")
 	public com.revature.feign.User getUserByEmail(@PathVariable String email);
 	
 	@CognitoAuth(roles = { CognitoRoles.STAGING_MANAGER, CognitoRoles.TRAINER, CognitoRoles.ADMIN })
 	@PostMapping(path="users/emailnopage", consumes="application/json", produces="application/json")
 	public ArrayList<com.revature.feign.User> getUsersByEmails(@RequestBody EmailList eList);
+
 
 	@CognitoAuth(roles = { CognitoRoles.STAGING_MANAGER, CognitoRoles.TRAINER })
 	@GetMapping("cohorts/{id}")

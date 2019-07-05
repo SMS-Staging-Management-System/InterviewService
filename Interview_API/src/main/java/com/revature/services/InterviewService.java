@@ -32,7 +32,9 @@ public interface InterviewService {
 	Interview findByManagerEmail(String s);
 	FeedbackStatus findStatusById(Integer id);
 	List<Interview> findAll();
-	Page<Interview> getInterviewsStaging(Specification<Interview> spec, Pageable pageable);
+	List<Interview> findAllTest();
+	//Page<Interview> getInterviewsStaging(Specification<Interview> spec, Pageable pageable);
+	List<Interview> getInterviewsStaging();
 	Page<Interview> findAll(Specification<Interview> spec, Pageable pageable);
 	Interview addNewInterview(NewInterviewData i);
 	Interview addAssociateInput(NewAssociateInput a);
