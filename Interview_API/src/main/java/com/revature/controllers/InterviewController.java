@@ -29,8 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revature.cognito.annotations.CognitoAuth;
 import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.FeedbackData;
+import com.revature.dtos.FeedbackStat;
 import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
+import com.revature.models.FeedbackStatus;
 import com.revature.models.Interview;
 import com.revature.models.InterviewFeedback;
 import com.revature.dtos.NewInterviewData;
@@ -227,7 +229,7 @@ public class InterviewController {
 	public ResponseEntity<Interview> updateInterviewFeedback(@Valid @RequestBody FeedbackData f) {
 		Interview result = interviewService.setFeedback(f);
 		if(result != null) {
-			return ResponseEntity.ok(interviewService.setFeedback(f));
+			return ResponseEntity.ok(result);
 		}
 		return new ResponseEntity<Interview>(HttpStatus.BAD_REQUEST);
 	}
@@ -363,6 +365,13 @@ public class InterviewController {
 		}
 		
 		return new ResponseEntity<UserDto>(user,headers,resultStatus);
+	}
+	
+	@GetMapping("/reports/FeedbackStats/page")
+	public Page<FeedbackStat> fetchFeedbackStats(
+            @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
+            @RequestParam(name="pageSize", defaultValue="5") Integer pageSize) {
+		return interviewService.findFeedbackStats(PageRequest.of(pageNumber, pageSize));
 	}
   }
 
