@@ -59,11 +59,13 @@ public class InterviewController {
 	@Autowired
 	private IUserClient userClient;
 
+	@CognitoAuth(roles = {})
 	@GetMapping
 	public List<Interview> findAll() {
 		return interviewService.findAll();
 	}
 	
+	@CognitoAuth(roles = {})
 	@GetMapping("users/{id}")
 	public User findById(@PathVariable("id") int id) {
 		return userClient.findById(id);
@@ -75,6 +77,7 @@ public class InterviewController {
 		return userClient.getByEmail(email);
 	}
 	
+	@CognitoAuth(roles = {})
 	@GetMapping("/pages")
 	public Page<Interview> getInterviewPageByAssociateEmail(
             @RequestParam(name="orderBy", defaultValue="id") String orderBy,
@@ -89,6 +92,7 @@ public class InterviewController {
         return interviewService.findAllByAssociateEmail(email, pageParameters);
     }
 	
+	@CognitoAuth(roles = {})
 	@GetMapping("/page")
 	public Page<Interview> getInterviewPage(
             @RequestParam(name="orderBy", defaultValue="id") String orderBy,
@@ -167,16 +171,19 @@ public class InterviewController {
 	//returns 2 numbers in a list
 	//the first is the number of users
 	//the second is the number of users who received 24 hour notice (according to the associate)
+	@CognitoAuth(roles = {})
 	@GetMapping("reports/request24/associate")
 	public List<Integer> getInterviewsWithin24HourNoticeAssociate() {
 		return interviewService.getInterviewsWithin24HourNoticeAssociate();
     }
 	
+	@CognitoAuth(roles = {})
 	@GetMapping("{InterviewId}")
 	public Interview getInterviewById(@PathVariable int InterviewId){
 		return interviewService.findById(InterviewId);
 	}
 
+	@CognitoAuth(roles = {})
 	@GetMapping("markReviewed/{InterviewId}")
 	public Interview markReviewed(@PathVariable int InterviewId){
 		return interviewService.markReviewed(InterviewId);
@@ -185,16 +192,19 @@ public class InterviewController {
 	//returns 2 numbers in a list
 	//the first is the number of users
 	//the second is the number of users who received 24 hour notice (according to the manager)
+	@CognitoAuth(roles = {})
 	@GetMapping("reports/request24/manager")
 	public List<Integer> getInterviewsWithin24HourNoticeManager() {
 		return interviewService.getInterviewsWithin24HourNoticeManager();
     }
 
+	@CognitoAuth(roles = {})
 	@PostMapping("/saveinterview")
 	public Interview newInterview(@Valid @RequestBody Interview i) {
 		return interviewService.save(i);
 	}
 	
+	@CognitoAuth(roles = {})
 	@PostMapping("/new")
 	public ResponseEntity<Interview> addNewInterview(@Valid @RequestBody NewInterviewData i) {
 		
@@ -203,6 +213,7 @@ public class InterviewController {
 		return ResponseEntity.ok(returnedInterview);
 	}
   
+	@CognitoAuth(roles = {})
 	@GetMapping("/test")
 	public ResponseEntity<String> test() {
 		String o = "failed";
@@ -220,6 +231,7 @@ public class InterviewController {
 		return ResponseEntity.ok(o);		
 	}
 
+	@CognitoAuth(roles = {})
 	@GetMapping("/findInterview")
 	public Interview findInterviewById(
 		@RequestParam(name="interviewId", defaultValue="id") int interviewId) {
@@ -227,12 +239,14 @@ public class InterviewController {
 		return interviewService.findById(interviewId);
 	}
 
+	@CognitoAuth(roles = {})
 	@PostMapping("/associateInput")
 	public ResponseEntity<Interview> newAssociateInput(@Valid @RequestBody NewAssociateInput a) {
 		
 		return ResponseEntity.ok(interviewService.addAssociateInput(a));
 	}
 	
+	@CognitoAuth(roles = {})
 	@PostMapping("/feedback")
 	public ResponseEntity<Interview> updateInterviewFeedback(@Valid @RequestBody FeedbackData f) {
 		
@@ -241,11 +255,13 @@ public class InterviewController {
 		return ResponseEntity.ok(result);	
 	}
 	
+	@CognitoAuth(roles = {})
 	@GetMapping("Feedback/InterviewId/{InterviewId}")
 	public InterviewFeedback getInterviewFeedbackByInterviewID(@PathVariable int InterviewId) {
 		return interviewService.getInterviewFeedbackByInterviewID(InterviewId);
 	}
 	
+	@CognitoAuth(roles = {})
 	@PatchMapping("Feedback/InterviewId/{InterviewId}")
 	public ResponseEntity<InterviewFeedback> editInterviewFeedbackByInterviewId(@PathVariable int InterviewId, @Valid @RequestBody FeedbackData f) {
 		
@@ -254,15 +270,19 @@ public class InterviewController {
 		return ResponseEntity.ok(result);
 	}
   
+	@CognitoAuth(roles = {})
 	@GetMapping("reports/InterviewsPerAssociate")
 	public List<AssociateInterview> getInterviewsPerAssociate() {
         return interviewService.findInterviewsPerAssociate();
     }
+	
+	@CognitoAuth(roles = {})
 	@GetMapping("dashboard/interviews/associate/fiveormore")
 	public List<AssociateInterview> getAssociatesWithFiveOrMore() {
         return interviewService.getAssociatesWithFiveOrMore();
     }
 	
+	@CognitoAuth(roles = {})
 	@GetMapping("reports/InterviewsPerAssociate/page")
 	public Page<AssociateInterview> getInterviewsPerAssociatePaged(
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
@@ -273,11 +293,13 @@ public class InterviewController {
         return interviewService.findInterviewsPerAssociate(pageParameters);
     }
 	
+	@CognitoAuth(roles = {})
 	@GetMapping("reports/InterviewsPerAssociate/chart")
 	public NumberOfInterviewsCount getInterviewsPerAssociateStats() {
 		return interviewService.findAssociateInterviewsData();
 	}
 	
+	@CognitoAuth(roles = {})
 	@GetMapping("dashboard/interviews/associate/fiveormore/page")
 	public Page<AssociateInterview> getAssociatesWithFiveOrMorePaged(
 		@RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
@@ -288,11 +310,13 @@ public class InterviewController {
         return interviewService.getAssociatesWithFiveOrMore(pageParameters);
     }
 
+	@CognitoAuth(roles = {})
 	@GetMapping("reports/AssociateNeedFeedback")
 	public List<User> getAssociateNeedFeedback() {
         return interviewService.getAssociateNeedFeedback();
     }
 	
+	@CognitoAuth(roles = {})
 	@GetMapping("reports/AssociateNeedFeedback/page")
 	public Page<User> getAssociateNeedFeedbackPaged(
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
@@ -303,12 +327,13 @@ public class InterviewController {
         return interviewService.getAssociateNeedFeedback(pageParameters);
     }
 	
-
+	@CognitoAuth(roles = {})
 	@GetMapping("reports/interview24")
 	public List<Interview24Hour> getAll24HourNotice() {
         return interviewService.getAll24HourNotice();
     }
 	
+	@CognitoAuth(roles = {})
 	@GetMapping("reports/interview24/page")
 	public Page<Interview24Hour> getAll24HourNotice(
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
@@ -319,12 +344,13 @@ public class InterviewController {
         return interviewService.getAll24HourNotice(pageParameters);
     }
 	
-
+	@CognitoAuth(roles = {})
 	@GetMapping("reports/interviewJD")
 	public List<InterviewAssociateJobData> getAllJD() {
         return interviewService.getAllJD();
     }
 	
+	@CognitoAuth(roles = {})
 	@GetMapping("reports/interviewJD/page")
 	public Page<InterviewAssociateJobData> getAllJD(
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
@@ -335,17 +361,18 @@ public class InterviewController {
         return interviewService.getAllJD(pageParameters);
     }
 	
-	
 	// [0] is the total number of interviews
 	// [1] is the number of interviews with no feedback requested
 	// [2] is the number of interviews with feedback requested
 	// [3] is the number of interviews that received feedback that hasn't been delivered to associate
 	// [4] is the number of interviews that received feedback that has been delivered to associate
+	@CognitoAuth(roles = {})
 	@GetMapping("reports/AssociateNeedFeedback/chart")
 	public Integer[] getAssociateNeedFeedbackChart() {
 		return interviewService.getAssociateNeedFeedbackChart();
 	}
 	
+	@CognitoAuth(roles = {})
 	@GetMapping("CalendarWeek/{epochDate}")
 	public List<Interview> findByCalendarWeek(@PathVariable long epochDate) {
 		
@@ -354,6 +381,7 @@ public class InterviewController {
 		return interviewService.findByScheduledWeek(date);
 	}
 	
+	@CognitoAuth(roles = {})
 	@GetMapping(value = "email/{email:.+}") 
 	public ResponseEntity<UserDto> findByEmail(@PathVariable String email) {
 		
@@ -377,6 +405,7 @@ public class InterviewController {
 		return new ResponseEntity<UserDto>(user,headers,HttpStatus.OK);
 	}
 	
+	@CognitoAuth(roles = {})
 	@GetMapping("/reports/FeedbackStats/page")
 	public Page<FeedbackStat> fetchFeedbackStats(
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
