@@ -26,7 +26,7 @@ public interface IUserClient {
 	public User findById(@PathVariable("id") int id);
 
 	@CognitoAuth(roles = { "staging-manager" })
-	@GetMapping(path = "users/email/{email:.+}")
+	@GetMapping(path = "users/email/{email}")
 	public ResponseEntity<User> findByEmail(@PathVariable String email);
 	
 	@CognitoAuth(roles = { "staging-manager" })
