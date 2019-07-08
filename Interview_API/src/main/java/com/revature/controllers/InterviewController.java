@@ -82,8 +82,7 @@ public class InterviewController {
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
             @RequestParam(name="pageSize", defaultValue="5") Integer pageSize,
             @RequestParam(name="email") String email) {
-		// Example url call: ~:8091/interview/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
+		
 		Sort sorter = new Sort(Sort.Direction.valueOf(direction), orderBy);
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize, sorter);
         
@@ -101,8 +100,6 @@ public class InterviewController {
             @RequestParam(name="place", defaultValue="placeName") String place,
             @RequestParam(name="clientName", defaultValue="clientName") String clientName,
             @RequestParam(name="staging", defaultValue="stagingOff") String staging) {
-		// Example url call: ~:8091/interview/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
 		
 		Sort sorter = new Sort(Sort.Direction.valueOf(direction), orderBy);
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize, sorter);
@@ -129,8 +126,8 @@ public class InterviewController {
       		if(clientName.equals("clientName")) {
       			clientNameInputStaging = ".*";
       		} else clientNameInputStaging = clientName;
-      		//System.out.println(clientNameInput);
-			 return item.getAssociateEmail().matches(associateEmailInputStaging) 
+      		
+			return item.getAssociateEmail().matches(associateEmailInputStaging) 
 					&& item.getManagerEmail().matches(managerEmailInputStaging) 
 					&& item.getPlace().matches(placeInputStaging) 
 					&& item.getClient().getClientName().matches(clientNameInputStaging);
@@ -232,7 +229,7 @@ public class InterviewController {
 
 	@PostMapping("/associateInput")
 	public ResponseEntity<Interview> newAssociateInput(@Valid @RequestBody NewAssociateInput a) {
-		//System.out.println(a);
+		
 		return ResponseEntity.ok(interviewService.addAssociateInput(a));
 	}
 	
@@ -270,8 +267,7 @@ public class InterviewController {
 	public Page<AssociateInterview> getInterviewsPerAssociatePaged(
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
             @RequestParam(name="pageSize", defaultValue="5") Integer pageSize) {
-		// Example url call: ~:8091/reports/InterviewsPerAssociate/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
+
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
         
         return interviewService.findInterviewsPerAssociate(pageParameters);
@@ -286,9 +282,9 @@ public class InterviewController {
 	public Page<AssociateInterview> getAssociatesWithFiveOrMorePaged(
 		@RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
         @RequestParam(name="pageSize", defaultValue="5") Integer pageSize) {
-		// Example url call: ~:8091/reports/InterviewsPerAssociate/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
+
 	    Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
+	    
         return interviewService.getAssociatesWithFiveOrMore(pageParameters);
     }
 
@@ -301,8 +297,7 @@ public class InterviewController {
 	public Page<User> getAssociateNeedFeedbackPaged(
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
             @RequestParam(name="pageSize", defaultValue="5") Integer pageSize) {
-		// Example url call: ~:8091/reports/InterviewsPerAssociate/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
+
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
         
         return interviewService.getAssociateNeedFeedback(pageParameters);
@@ -318,8 +313,7 @@ public class InterviewController {
 	public Page<Interview24Hour> getAll24HourNotice(
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
             @RequestParam(name="pageSize", defaultValue="5") Integer pageSize) {
-		// Example url call: ~:8091/reports/getAll24HourNotice/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
+
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
         
         return interviewService.getAll24HourNotice(pageParameters);
@@ -335,8 +329,7 @@ public class InterviewController {
 	public Page<InterviewAssociateJobData> getAllJD(
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
             @RequestParam(name="pageSize", defaultValue="5") Integer pageSize) {
-		// Example url call: ~:8091/reports/getAll24HourNotice/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
+		
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
         
         return interviewService.getAllJD(pageParameters);
