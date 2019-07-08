@@ -364,16 +364,15 @@ public class InterviewServiceImpl implements InterviewService {
 		else {
 			delDate = new Date(f.getFeedbackDeliveredDate());
 		}
+		
 		InterviewFeedback interviewFeedback = new InterviewFeedback(0, reqDate, fText, recDate, delDate, status, format);
+		
 		Interview i = this.findById(f.getInterviewId());
-		if(i != null) {
-			interviewFeedback = feedbackRepo.save(interviewFeedback);
-			i.setFeedback(interviewFeedback);
-			return save(i);
-		}
-		else 
-			return null;
-  }
+		
+		interviewFeedback = feedbackRepo.save(interviewFeedback);
+		i.setFeedback(interviewFeedback);
+		return save(i);
+	}
 	
 	public InterviewFeedback updateFeedback(Integer i, FeedbackData f) {
 		FeedbackStatus status;

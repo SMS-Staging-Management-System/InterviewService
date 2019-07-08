@@ -41,6 +41,7 @@ import com.revature.models.InterviewFeedback;
 import com.revature.dtos.NewInterviewData;
 import com.revature.dtos.NumberOfInterviewsCount;
 import com.revature.dtos.UserDto;
+import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.feign.IUserClient;
 import com.revature.models.User;
 import com.revature.dtos.NewAssociateInput;
@@ -56,7 +57,7 @@ public class InterviewController {
 	private InterviewService interviewService;
 	
 	@Autowired
-	private IUserClient iUserClient;
+	private IUserClient userClient;
 
 	@GetMapping
 	public List<Interview> findAll() {
@@ -65,13 +66,13 @@ public class InterviewController {
 	
 	@GetMapping("users/{id}")
 	public User findById(@PathVariable("id") int id) {
-		return iUserClient.findById(id);
+		return userClient.findById(id);
 	}
 	
 	@CognitoAuth(roles = { "staging-manager" })
 	@GetMapping(path = "users/user/email/{email:.+}")
 	public ResponseEntity<com.revature.feign.User> getByEmail(@PathVariable String email){
-		return iUserClient.getByEmail(email);
+		return userClient.getByEmail(email);
 	}
 	
 	@GetMapping("/pages")
@@ -81,8 +82,7 @@ public class InterviewController {
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
             @RequestParam(name="pageSize", defaultValue="5") Integer pageSize,
             @RequestParam(name="email") String email) {
-		// Example url call: ~:8091/interview/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
+		
 		Sort sorter = new Sort(Sort.Direction.valueOf(direction), orderBy);
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize, sorter);
         
@@ -100,8 +100,6 @@ public class InterviewController {
             @RequestParam(name="place", defaultValue="placeName") String place,
             @RequestParam(name="clientName", defaultValue="clientName") String clientName,
             @RequestParam(name="staging", defaultValue="stagingOff") String staging) {
-		// Example url call: ~:8091/interview/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
 		
 		Sort sorter = new Sort(Sort.Direction.valueOf(direction), orderBy);
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize, sorter);
@@ -128,8 +126,8 @@ public class InterviewController {
       		if(clientName.equals("clientName")) {
       			clientNameInputStaging = ".*";
       		} else clientNameInputStaging = clientName;
-      		//System.out.println(clientNameInput);
-			 return item.getAssociateEmail().matches(associateEmailInputStaging) 
+      		
+			return item.getAssociateEmail().matches(associateEmailInputStaging) 
 					&& item.getManagerEmail().matches(managerEmailInputStaging) 
 					&& item.getPlace().matches(placeInputStaging) 
 					&& item.getClient().getClientName().matches(clientNameInputStaging);
@@ -199,18 +197,12 @@ public class InterviewController {
 	
 	@PostMapping("/new")
 	public ResponseEntity<Interview> addNewInterview(@Valid @RequestBody NewInterviewData i) {
+		
 		Interview returnedInterview = interviewService.addNewInterview(i);
-		if(returnedInterview != null) {
-			return ResponseEntity.ok(returnedInterview);
-		}
-		else {
-			return new ResponseEntity<Interview>(HttpStatus.BAD_REQUEST);
-		}
+		
+		return ResponseEntity.ok(returnedInterview);
 	}
   
-	@Autowired
-    private IUserClient userClient;
-
 	@GetMapping("/test")
 	public ResponseEntity<String> test() {
 		String o = "failed";
@@ -237,31 +229,29 @@ public class InterviewController {
 
 	@PostMapping("/associateInput")
 	public ResponseEntity<Interview> newAssociateInput(@Valid @RequestBody NewAssociateInput a) {
-		//System.out.println(a);
+		
 		return ResponseEntity.ok(interviewService.addAssociateInput(a));
 	}
 	
 	@PostMapping("/feedback")
 	public ResponseEntity<Interview> updateInterviewFeedback(@Valid @RequestBody FeedbackData f) {
+		
 		Interview result = interviewService.setFeedback(f);
-		if(result != null) {
-			return ResponseEntity.ok(result);
-		}
-		return new ResponseEntity<Interview>(HttpStatus.BAD_REQUEST);
+		
+		return ResponseEntity.ok(result);	
 	}
 	
 	@GetMapping("Feedback/InterviewId/{InterviewId}")
 	public InterviewFeedback getInterviewFeedbackByInterviewID(@PathVariable int InterviewId) {
 		return interviewService.getInterviewFeedbackByInterviewID(InterviewId);
-  }
+	}
 	
 	@PatchMapping("Feedback/InterviewId/{InterviewId}")
 	public ResponseEntity<InterviewFeedback> editInterviewFeedbackByInterviewId(@PathVariable int InterviewId, @Valid @RequestBody FeedbackData f) {
+		
 		InterviewFeedback result = interviewService.updateFeedback(InterviewId,f);
-		if(result != null) {
-			return ResponseEntity.ok(result);
-		}
-		return new ResponseEntity<InterviewFeedback>(HttpStatus.BAD_REQUEST);
+		
+		return ResponseEntity.ok(result);
 	}
   
 	@GetMapping("reports/InterviewsPerAssociate")
@@ -277,8 +267,7 @@ public class InterviewController {
 	public Page<AssociateInterview> getInterviewsPerAssociatePaged(
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
             @RequestParam(name="pageSize", defaultValue="5") Integer pageSize) {
-		// Example url call: ~:8091/reports/InterviewsPerAssociate/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
+
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
         
         return interviewService.findInterviewsPerAssociate(pageParameters);
@@ -293,9 +282,9 @@ public class InterviewController {
 	public Page<AssociateInterview> getAssociatesWithFiveOrMorePaged(
 		@RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
         @RequestParam(name="pageSize", defaultValue="5") Integer pageSize) {
-		// Example url call: ~:8091/reports/InterviewsPerAssociate/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
+
 	    Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
+	    
         return interviewService.getAssociatesWithFiveOrMore(pageParameters);
     }
 
@@ -308,8 +297,7 @@ public class InterviewController {
 	public Page<User> getAssociateNeedFeedbackPaged(
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
             @RequestParam(name="pageSize", defaultValue="5") Integer pageSize) {
-		// Example url call: ~:8091/reports/InterviewsPerAssociate/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
+
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
         
         return interviewService.getAssociateNeedFeedback(pageParameters);
@@ -325,8 +313,7 @@ public class InterviewController {
 	public Page<Interview24Hour> getAll24HourNotice(
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
             @RequestParam(name="pageSize", defaultValue="5") Integer pageSize) {
-		// Example url call: ~:8091/reports/getAll24HourNotice/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
+
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
         
         return interviewService.getAll24HourNotice(pageParameters);
@@ -342,8 +329,7 @@ public class InterviewController {
 	public Page<InterviewAssociateJobData> getAllJD(
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
             @RequestParam(name="pageSize", defaultValue="5") Integer pageSize) {
-		// Example url call: ~:8091/reports/getAll24HourNotice/page?pageNumber=0&pageSize=3
-		// The above url will return the 0th page of size 3.
+		
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize);
         
         return interviewService.getAllJD(pageParameters);
@@ -370,23 +356,25 @@ public class InterviewController {
 	
 	@GetMapping(value = "email/{email:.+}") 
 	public ResponseEntity<UserDto> findByEmail(@PathVariable String email) {
+		
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/json");
 
 		UserDto user = null;
-		HttpStatus resultStatus = HttpStatus.OK;
+
 		try {
 			user = interviewService.findByEmail(email);
+			
 		} catch (Exception e) {
 
 			e.printStackTrace();
 		}
 
 		if (user == null) {
-			resultStatus = HttpStatus.NOT_FOUND;
+			throw new ResourceNotFoundException("Failed to find user of email " + email);
 		}
 		
-		return new ResponseEntity<UserDto>(user,headers,resultStatus);
+		return new ResponseEntity<UserDto>(user,headers,HttpStatus.OK);
 	}
 	
 	@GetMapping("/reports/FeedbackStats/page")
