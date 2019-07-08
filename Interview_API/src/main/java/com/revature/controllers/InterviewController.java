@@ -41,6 +41,7 @@ import com.revature.models.InterviewFeedback;
 import com.revature.dtos.NewInterviewData;
 import com.revature.dtos.NumberOfInterviewsCount;
 import com.revature.dtos.UserDto;
+import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.feign.IUserClient;
 import com.revature.models.User;
 import com.revature.dtos.NewAssociateInput;
@@ -199,13 +200,10 @@ public class InterviewController {
 	
 	@PostMapping("/new")
 	public ResponseEntity<Interview> addNewInterview(@Valid @RequestBody NewInterviewData i) {
+		
 		Interview returnedInterview = interviewService.addNewInterview(i);
-		if(returnedInterview != null) {
-			return ResponseEntity.ok(returnedInterview);
-		}
-		else {
-			return new ResponseEntity<Interview>(HttpStatus.BAD_REQUEST);
-		}
+		
+		return ResponseEntity.ok(returnedInterview);
 	}
   
 	@Autowired
@@ -243,25 +241,23 @@ public class InterviewController {
 	
 	@PostMapping("/feedback")
 	public ResponseEntity<Interview> updateInterviewFeedback(@Valid @RequestBody FeedbackData f) {
+		
 		Interview result = interviewService.setFeedback(f);
-		if(result != null) {
-			return ResponseEntity.ok(result);
-		}
-		return new ResponseEntity<Interview>(HttpStatus.BAD_REQUEST);
+		
+		return ResponseEntity.ok(result);	
 	}
 	
 	@GetMapping("Feedback/InterviewId/{InterviewId}")
 	public InterviewFeedback getInterviewFeedbackByInterviewID(@PathVariable int InterviewId) {
 		return interviewService.getInterviewFeedbackByInterviewID(InterviewId);
-  }
+	}
 	
 	@PatchMapping("Feedback/InterviewId/{InterviewId}")
 	public ResponseEntity<InterviewFeedback> editInterviewFeedbackByInterviewId(@PathVariable int InterviewId, @Valid @RequestBody FeedbackData f) {
+		
 		InterviewFeedback result = interviewService.updateFeedback(InterviewId,f);
-		if(result != null) {
-			return ResponseEntity.ok(result);
-		}
-		return new ResponseEntity<InterviewFeedback>(HttpStatus.BAD_REQUEST);
+		
+		return ResponseEntity.ok(result);
 	}
   
 	@GetMapping("reports/InterviewsPerAssociate")
@@ -370,23 +366,25 @@ public class InterviewController {
 	
 	@GetMapping(value = "email/{email:.+}") 
 	public ResponseEntity<UserDto> findByEmail(@PathVariable String email) {
+		
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/json");
 
 		UserDto user = null;
-		HttpStatus resultStatus = HttpStatus.OK;
+
 		try {
 			user = interviewService.findByEmail(email);
+			
 		} catch (Exception e) {
 
 			e.printStackTrace();
 		}
 
 		if (user == null) {
-			resultStatus = HttpStatus.NOT_FOUND;
+			throw new ResourceNotFoundException("Failed to find user of email " + email);
 		}
 		
-		return new ResponseEntity<UserDto>(user,headers,resultStatus);
+		return new ResponseEntity<UserDto>(user,headers,HttpStatus.OK);
 	}
 	
 	@GetMapping("/reports/FeedbackStats/page")
