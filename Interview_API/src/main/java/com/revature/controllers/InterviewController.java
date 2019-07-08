@@ -57,7 +57,7 @@ public class InterviewController {
 	private InterviewService interviewService;
 	
 	@Autowired
-	private IUserClient iUserClient;
+	private IUserClient userClient;
 
 	@GetMapping
 	public List<Interview> findAll() {
@@ -66,13 +66,13 @@ public class InterviewController {
 	
 	@GetMapping("users/{id}")
 	public User findById(@PathVariable("id") int id) {
-		return iUserClient.findById(id);
+		return userClient.findById(id);
 	}
 	
 	@CognitoAuth(roles = { "staging-manager" })
 	@GetMapping(path = "users/user/email/{email:.+}")
 	public ResponseEntity<com.revature.feign.User> getByEmail(@PathVariable String email){
-		return iUserClient.getByEmail(email);
+		return userClient.getByEmail(email);
 	}
 	
 	@GetMapping("/pages")
@@ -206,9 +206,6 @@ public class InterviewController {
 		return ResponseEntity.ok(returnedInterview);
 	}
   
-	@Autowired
-    private IUserClient userClient;
-
 	@GetMapping("/test")
 	public ResponseEntity<String> test() {
 		String o = "failed";
