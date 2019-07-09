@@ -146,10 +146,9 @@ public class InterviewServiceImpl implements InterviewService {
 		List<Interview> stagingInterviews = interviewRepo.findAll().stream().filter((item) -> {
         	String assocEmail = item.getAssociateEmail();        	
         	
-        	com.revature.feign.User user = null;
+        	User user = null;
     		try {
-    		//user = userClient.getUserByEmail(java.net.URLDecoder.decode(assocEmail.toLowerCase(), "utf-8"));
-    		user = userClient.getByEmail(assocEmail).getBody();
+    		user = userClient.findByEmail(assocEmail).getBody();
     		} catch(Exception e) {
     			e.printStackTrace();		
     		}
@@ -164,9 +163,6 @@ public class InterviewServiceImpl implements InterviewService {
         }).collect(Collectors.toList());
 		
 		return stagingInterviews;
-
-//		PageImpl interviewsPage = ListToPage.getPage(stagingInterviews, pageable);
-//		return interviewsPage;
 	}
 
 	public List<AssociateInterview> findInterviewsPerAssociate() {
@@ -706,9 +702,9 @@ public class InterviewServiceImpl implements InterviewService {
 			});
 		try {
 			EmailList eList = new EmailList(emailList);
-			ArrayList<com.revature.feign.User> uList = userClient.getUsersByEmails(eList);
+			ArrayList<User> uList = userClient.getUsersByEmails(eList);
 			ArrayList<String> names = new ArrayList<>(2);
-			ArrayList<com.revature.feign.User> users = new ArrayList<>(2);
+			ArrayList<User> users = new ArrayList<>(2);
 			names.add("");
 			names.add("");
 			users.add(null);
@@ -744,6 +740,12 @@ public class InterviewServiceImpl implements InterviewService {
 		// some of the metadata in PageImpl may be wrong.
 		return ListToPage.getPage(returnList, page);
 
+	}
+
+	@Override
+	public User getByEmail(String email) {
+		// TODO Auto-generated method stub
+		return userClient.findByEmail(email).getBody();
 	}
 
 }

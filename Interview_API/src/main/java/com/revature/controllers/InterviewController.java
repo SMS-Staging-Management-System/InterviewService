@@ -71,11 +71,30 @@ public class InterviewController {
 		return userClient.findById(id);
 	}
 	
-	@CognitoAuth(roles = {})
-	@GetMapping(path = "users/user/email/{email:.+}")
-	public ResponseEntity<com.revature.feign.User> getByEmail(@PathVariable String email){
-		return userClient.getByEmail(email);
-	}
+//	@CognitoAuth(roles = {})
+//	@GetMapping(path = "users/user/email/{email:.+}")
+//	public ResponseEntity<User> getByEmail(@PathVariable String email){
+//		//return interviewService.getByEmail(email);
+//		
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.add("Content-Type", "application/json");
+//
+//		User user = null;
+//
+//		try {
+//			user = interviewService.getByEmail(email);
+//			
+//		} catch (Exception e) {
+//
+//			e.printStackTrace();
+//		}
+//
+//		if (user == null) {
+//			throw new ResourceNotFoundException("Failed to find user of email " + email);
+//		}
+//		
+//		return new ResponseEntity<User>(user,headers,HttpStatus.OK);
+//	}
 	
 	@CognitoAuth(roles = {})
 	@GetMapping("/pages")
@@ -108,8 +127,7 @@ public class InterviewController {
 		Sort sorter = new Sort(Sort.Direction.valueOf(direction), orderBy);
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize, sorter);
         
-      if(!staging.equals("stagingOff")) {   	    		
-    	//List<Interview> interviewsStaging = interviewService.getInterviewsStaging(); 	
+      if(!staging.equals("stagingOff")) {   	    			
     	List<Interview> interviewsStagingFiltered = interviewService.getInterviewsStaging().stream().filter((item) -> {
     		String associateEmailInputStaging;
     		if(associateEmail.equals("associateEmail")) {
