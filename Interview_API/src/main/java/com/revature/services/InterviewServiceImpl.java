@@ -111,7 +111,11 @@ public class InterviewServiceImpl implements InterviewService {
 
 	public Interview addNewInterview(NewInterviewData i) {
 		
-		String managerEmail = cognitoUtil.getRequesterClaims().getEmail();
+		String managerEmail = i.getManagerEmail(); 
+		if(managerEmail == "") {
+			managerEmail = cognitoUtil.getRequesterClaims().getEmail();
+		}
+		
 		String associateEmail = i.getAssociateEmail();
 		Date scheduled = new Date(i.getDate());// TODO: check this is valid date
 		String location = i.getLocation();
