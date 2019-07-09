@@ -62,4 +62,5 @@ public interface InterviewService {
 	InterviewFormat findFormatById(Integer id);
 	Page<FeedbackStat> findFeedbackStats(Pageable page);
 	UserDto findByEmail(String email);
+	User getByEmail(String email);
 }
