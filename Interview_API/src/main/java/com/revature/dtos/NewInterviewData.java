@@ -81,33 +81,60 @@ public class NewInterviewData {
 	public void setManagerEmail(String managerEmail) {
 		this.managerEmail = managerEmail;
 	}
-	
+
 	@Override
-	public boolean equals(Object o) {
-		if (o == this)
-			return true;
-		if (!(o instanceof NewInterviewData)) {
-			return false;
-		}
-		NewInterviewData newInterviewData = (NewInterviewData) o;
-		return Objects.equals(associateEmail, newInterviewData.associateEmail) && date == newInterviewData.date && Objects.equals(location, newInterviewData.location) && Objects.equals(client, newInterviewData.client);
+	public String toString() {
+		return "NewInterviewData [associateEmail=" + associateEmail + ", managerEmail=" + managerEmail + ", date="
+				+ date + ", location=" + location + ", client=" + client + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(associateEmail, date, location, client);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((associateEmail == null) ? 0 : associateEmail.hashCode());
+		result = prime * result + ((client == null) ? 0 : client.hashCode());
+		result = prime * result + (int) (date ^ (date >>> 32));
+		result = prime * result + ((location == null) ? 0 : location.hashCode());
+		result = prime * result + ((managerEmail == null) ? 0 : managerEmail.hashCode());
+		return result;
 	}
 
 	@Override
-	public String toString() {
-		return "{" +
-			" associateEmail='" + getAssociateEmail() + "'" +
-			", date='" + getDate() + "'" +
-			", location='" + getLocation() + "'" +
-			", client='" + getClient() + "'" +
-			"}";
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		NewInterviewData other = (NewInterviewData) obj;
+		if (associateEmail == null) {
+			if (other.associateEmail != null)
+				return false;
+		} else if (!associateEmail.equals(other.associateEmail))
+			return false;
+		if (client == null) {
+			if (other.client != null)
+				return false;
+		} else if (!client.equals(other.client))
+			return false;
+		if (date != other.date)
+			return false;
+		if (location == null) {
+			if (other.location != null)
+				return false;
+		} else if (!location.equals(other.location))
+			return false;
+		if (managerEmail == null) {
+			if (other.managerEmail != null)
+				return false;
+		} else if (!managerEmail.equals(other.managerEmail))
+			return false;
+		return true;
 	}
-
+	
+	
 
 	
 }
