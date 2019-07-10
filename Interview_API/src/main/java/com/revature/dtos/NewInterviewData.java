@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class NewInterviewData {
   	private String associateEmail;
+  	private String managerEmail;
 	private long date;
 	private String location;
 	private String client; 
@@ -12,9 +13,10 @@ public class NewInterviewData {
 		super();
 	}
 
-	public NewInterviewData(String associateEmail, long date, String location, String client) {
+	public NewInterviewData(String associateEmail, String managerEmail, long date, String location, String client) {
 		super();
 		this.associateEmail = associateEmail;
+		this.managerEmail = managerEmail;
 		this.date = date;
 		this.location = location;
 		this.client = client;
@@ -71,7 +73,15 @@ public class NewInterviewData {
 		this.client = client;
 		return this;
 	}
+	
+	public String getManagerEmail() {
+		return managerEmail;
+	}
 
+	public void setManagerEmail(String managerEmail) {
+		this.managerEmail = managerEmail;
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if (o == this)

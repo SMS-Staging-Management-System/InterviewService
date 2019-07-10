@@ -222,7 +222,7 @@ public class InterviewController {
 		return interviewService.save(i);
 	}
 	
-	@CognitoAuth(roles = {})
+	//@CognitoAuth(roles = {})
 	@PostMapping("/new")
 	public ResponseEntity<Interview> addNewInterview(@Valid @RequestBody NewInterviewData i) {
 		
