@@ -41,7 +41,7 @@ interview-service:
     
 user-service:
   ribbon:
-    listOfServers: ${GATEWAY_URL:http://localhost:8765}/user-service/
+    listOfServers: http://localhost:8090
 
 ---
 spring:
