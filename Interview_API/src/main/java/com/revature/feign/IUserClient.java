@@ -1,5 +1,6 @@
 package com.revature.feign;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.revature.cognito.annotations.CognitoAuth;
 import com.revature.cognito.constants.CognitoRoles;
+import com.revature.dtos.EmailList;
 import com.revature.models.User;
 
 @FeignClient(name="user-service")
@@ -20,11 +22,17 @@ public interface IUserClient {
 	@GetMapping
 	String findAll();
 
-	@GetMapping("{id}")
+	@GetMapping("users/{id}")
 	public User findById(@PathVariable("id") int id);
 
-	@GetMapping(path = "email/{email}")
-	public ResponseEntity<User> findByEmail(@PathVariable("email") String email);
+	@CognitoAuth(roles = { "staging-manager" })
+	@GetMapping(path = "users/email/{email}")
+	public ResponseEntity<User> findByEmail(@PathVariable String email);
+	
+	@CognitoAuth(roles = { CognitoRoles.STAGING_MANAGER, CognitoRoles.TRAINER, CognitoRoles.ADMIN })
+	@PostMapping(path="users/emailnopage", consumes="application/json", produces="application/json")
+	public ArrayList<User> getUsersByEmails(@RequestBody EmailList eList);
+
 
 	@CognitoAuth(roles = { CognitoRoles.STAGING_MANAGER, CognitoRoles.TRAINER })
 	@GetMapping("cohorts/{id}")
