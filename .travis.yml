@@ -4,14 +4,10 @@ addons:
     organization: 1809-spark-usf
 jobs:
   include:
-  - stage: pre-build
-    script:
-    - cd Interview_API
-    - mvn clean
   - stage: build
     script:
     - cd Interview_API
-    - mvn package
+    - mvn package -Dspring.profiles=dev
   - stage: quality
     script:
     - cd Interview_API
