@@ -1,7 +1,9 @@
 language: java
 addons:
   sonarcloud:
-    organization: 1809-spark-usf
+    organization: "sms-staging-management-ssytem"
+    token:
+      secure: "AchtvSg0osHcPw8BzFC/hN1mavGsG/k1QrjeYsP25gcY744qyqiJ2MxIThZwmEaTAxLpoQWapOFsdOEwzjq8pAH/ot6FEMOj4GF4gwdEDEOntnPBhZzOvMYuja/c+c4fj9P6OGUCqEmR+o05EbrtsiSOyNh2GajTQw01YneaYrBPVsFJuCMJHzQihdt96XuCP3IhyQt8hTR/30qgsipzJg2x+rgmcGTQhrFtLDsPDcQTvqNxB6UH1m/tgwhrcK0lbggNXQriLiOQT5k5Nc7m20aoLo331LqqKQKSeYgSq9Ew2hYvcEclROQ2xBe0M58/OiMoF3YWsi1//mvDueX/wDxWOtH/evX8xhG5/96wyNCqS3OggHmrsZAc+Wq2nHA8v0w50KXBMnZutXp38xgwFBljQpc0w34DAvqZdSez56qyt/WTufkst4CiWZ3E6iqKEYg7IgBQLxxfUVy8M45ltSg/QW5bGebc9U3/ICsSUJTigjJEtR9zH85/N7eQdRV3B3+yTIsWg76aETPCpQFPi7N1rAycyn8YhFpJ2bnf07VMmG0Zgx1lmB/Fqsis3vuY5fTKcz2tIEthMOh5+pxexOyJMiuV/lrAgrlgqbXPaYyNPk2933VNHN+WNGp3Gux4mXhx9S08ZeXvuMTjFt+OHe/PZoZwO2SAbu43vVUnbgM="
 jobs:
   include:
   - stage: build
@@ -11,7 +13,7 @@ jobs:
   - stage: quality
     script:
     - cd Interview_API
-    - mvn sonar:sonar
+    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=SMS-Staging-Management_InterviewService -Dspring.profiles=dev
 env:
   global:
   - secure: iaGLH6GX2rs/lot9OKe+j0cfV3b7SqH6l/+imo0CltpRb5hzVtS3kjWoLhAVaWDhMet/A0EKNRdxE5PZ0v5ttIF1xzk3F10MCpb+hPVXHi6zI83B1n3fQeOqzx2yrqOfzFa6J5eEDm6+05dw4tZmEw8MIeht7EBsrRNGJT5WVIRpk9oQ5PFGFvixY6p10N+2K+VWYYQ+IweU0mwndcwdq+BDGsrbKL68PfwUIhKbuOwCgidqFw08/Bkv2SiQKuyWxZBgYl9MWciWKv9dQuVz9hkVX4wSp6uzlr6PBRCq8n0ol6fm78GgaOJ06XMVXDLKPqJxoVEwDb21jozF7nbdXPghiBwKfItwd9uZxmdACcDzd26ahc3/w92TlzV+T8MVJ/iGFVgxNOyNez/93lIM2z5xmkC2TjViOR/5hP0QzUpG7qsAwCIo/MA2qiA3wsUOpTwiwHVoAvReRGgSbpGSWkJyNLXzbvthhHki3z1FnIjjDibaHhcxFwmjTtcaqWo6S3/DdO4obuEDf0dLy3XOgVqICEpZ9A0kjlUiMG40Wq1ilT3enbwxJbRHYFIL9yfSWmxN1gsVm2aykH4oqbNAtaRQg7KjuDtpsDQODFZizLQdB/K8rnnwReOv6bJuh2s3tjRX68/ycysytJaKPJK0ihEiPJjPOGgx55JSpjN/xSE=
