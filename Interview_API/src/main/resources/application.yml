@@ -14,7 +14,7 @@ gateway:
 
 spring:
   profiles:
-    active: ${DEPLOYMENT_STAGE}
+    active: ${DEPLOYMENT_STAGE:dev}
   application:
     name: interview-service
   
