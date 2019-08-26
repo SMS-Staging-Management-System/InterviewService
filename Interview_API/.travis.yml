@@ -1,0 +1,18 @@
+language: java
+
+addons:
+  sonarcloud:
+    organization: "1809-spark-usf"
+    
+    
+
+jobs:
+  include:
+    - stage: pre-build
+      script: mvn clean
+    
+    - stage: build
+      script: mvn package
+      
+    - stage: quality
+      script: mvn sonar:sonar

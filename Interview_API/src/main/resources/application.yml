@@ -14,7 +14,7 @@ gateway:
 
 spring:
   profiles:
-    active: ${DEPLOYMENT_STAGE}
+    active: ${DEPLOYMENT_STAGE:dev}
   application:
     name: interview-service
   
@@ -27,9 +27,9 @@ spring:
     
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    generate-ddl: false
+    generate-ddl: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
         default_schema: ${DB_SCHEMA}
@@ -41,7 +41,7 @@ interview-service:
     
 user-service:
   ribbon:
-    listOfServers: http://localhost:8090
+    listOfServers: ${GATEWAY_URL:http://localhost:8090}/user-service/
 
 ---
 spring:
