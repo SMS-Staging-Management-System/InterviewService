@@ -12,6 +12,7 @@ jobs:
     - mvn package -Dspring.profiles=dev
   - stage: quality
     script:
+    - git fetch --all
     - cd Interview_API
     - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=SMS-Staging-Management_InterviewService -Dspring.profiles=dev
 env:
