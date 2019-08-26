@@ -9,6 +9,7 @@ addons:
 jobs:
   include:
     - stage: pre-build
+      script: cd Interview_API
       script: mvn clean
     
     - stage: build
