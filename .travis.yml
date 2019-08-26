@@ -1,7 +1,7 @@
 language: java
 addons:
   sonarcloud:
-    organization: "sms-staging-management-ssytem"
+    organization: "sms-staging-management-system"
     token:
       secure: "AchtvSg0osHcPw8BzFC/hN1mavGsG/k1QrjeYsP25gcY744qyqiJ2MxIThZwmEaTAxLpoQWapOFsdOEwzjq8pAH/ot6FEMOj4GF4gwdEDEOntnPBhZzOvMYuja/c+c4fj9P6OGUCqEmR+o05EbrtsiSOyNh2GajTQw01YneaYrBPVsFJuCMJHzQihdt96XuCP3IhyQt8hTR/30qgsipzJg2x+rgmcGTQhrFtLDsPDcQTvqNxB6UH1m/tgwhrcK0lbggNXQriLiOQT5k5Nc7m20aoLo331LqqKQKSeYgSq9Ew2hYvcEclROQ2xBe0M58/OiMoF3YWsi1//mvDueX/wDxWOtH/evX8xhG5/96wyNCqS3OggHmrsZAc+Wq2nHA8v0w50KXBMnZutXp38xgwFBljQpc0w34DAvqZdSez56qyt/WTufkst4CiWZ3E6iqKEYg7IgBQLxxfUVy8M45ltSg/QW5bGebc9U3/ICsSUJTigjJEtR9zH85/N7eQdRV3B3+yTIsWg76aETPCpQFPi7N1rAycyn8YhFpJ2bnf07VMmG0Zgx1lmB/Fqsis3vuY5fTKcz2tIEthMOh5+pxexOyJMiuV/lrAgrlgqbXPaYyNPk2933VNHN+WNGp3Gux4mXhx9S08ZeXvuMTjFt+OHe/PZoZwO2SAbu43vVUnbgM="
 jobs:
