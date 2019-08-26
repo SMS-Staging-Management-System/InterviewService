@@ -16,4 +16,4 @@ spring:
     active:
     - test
     
-spring.profiles: ${spring.profiles:dev}
+spring.profiles: ${spring.profiles:test}
