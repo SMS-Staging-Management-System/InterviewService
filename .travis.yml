@@ -1,4 +1,6 @@
 language: java
+git:
+  depth: false
 addons:
   sonarcloud:
     organization: "sms-staging-management-system"
@@ -9,7 +11,12 @@ jobs:
   - stage: build
     script:
     - cd Interview_API
-    - mvn package -Dspring.profiles=dev
+    - mvn package -Dspring.profiles=dev -DskipTests
+
+  - stage: test
+    script:
+    - cd Interview_API
+    - mvn test -Dspring.profiles=dev
   - stage: quality
     script:
     - git fetch --all
