@@ -19,7 +19,6 @@ public class Interview24Hour {
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(I.getScheduled());
-		Date curDate = cal.getTime();
 		cal.add(Calendar.DATE, -1);
 		Date oneDayBefore = cal.getTime();
 		

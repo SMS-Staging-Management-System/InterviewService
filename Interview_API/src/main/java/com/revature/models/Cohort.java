@@ -56,11 +56,10 @@ public class Cohort {
 
 	public Cohort() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Cohort(int cohortId, @NotNull String cohortName, @NotNull String cohortDescription, String cohortToken,
-			Address address, LocalDate startDate, LocalDate endDate, Set<User> users, User trainer) {
+			Address address, LocalDate startDate, LocalDate endDate, Set<User> users, @NotNull User trainer) {
 		super();
 		this.cohortId = cohortId;
 		this.cohortName = cohortName;
@@ -85,7 +84,7 @@ public class Cohort {
 		return cohortName;
 	}
 
-	public void setCohortName(String cohortName) {
+	public void setCohortName(@NotNull String cohortName) {
 		this.cohortName = cohortName;
 	}
 
@@ -93,7 +92,7 @@ public class Cohort {
 		return cohortDescription;
 	}
 
-	public void setCohortDescription(String cohortDescription) {
+	public void setCohortDescription(@NotNull String cohortDescription) {
 		this.cohortDescription = cohortDescription;
 	}
 
@@ -141,7 +140,7 @@ public class Cohort {
 		return trainer;
 	}
 
-	public void setTrainer(User trainer) {
+	public void setTrainer(@NotNull User trainer) {
 		this.trainer = trainer;
 	}
 

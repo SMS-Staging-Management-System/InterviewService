@@ -6,10 +6,11 @@ logging:
         web: DEBUG
     root: ALL
     
----
 cognito:
   url: ${COGNITO_URL}
   key: ${COGNITO_KEY}
+gateway:
+  url: ${GATEWAY_URL}
 
 spring:
   profiles:
@@ -48,5 +49,25 @@ eureka:
   instance:
     lease-renewal-interval-in-seconds: 1
     lease-expiration-duration-in-seconds: 2
+    
+    
+---
+spring:
+  profiles: prod
+
+server:
+  port: 5000
+  
+eureka:
+  client:
+    enabled: false
+    
+ribbon:
+  eureka: 
+    enabled: false
+    
+interview-service:
+  ribbon:
+    listOfServers: ${GATEWAY_URL}
    
   

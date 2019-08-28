@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-//import com.revature.annotations.Logging;
 
 @Aspect
 @Component
@@ -18,27 +17,19 @@ public class LoggingAspect {
 	private Logger logger = Logger.getRootLogger();
 	
 	@Around("execution(* com.revature.services.*.*(..))")
-	public Object Logging(ProceedingJoinPoint pjp) throws Throwable {
+	public Object logging(ProceedingJoinPoint pjp) throws Throwable {
 		String logInfo = "";
 		if (pjp.getSignature().getName() != null) {
 			logInfo = logInfo + "Method: " + pjp.getSignature().getName() + "\n";
 		} else {
 			logInfo = logInfo + "Method not found\n";
 		}
-//		String args = "";
-//		if (pjp.getArgs().length > 0) {
-//			args = "Arguments:";
-//			for (Object o: pjp.getArgs()) {
-//				args = args + " " + o.toString();
-//			}
-//			logInfo = logInfo + args + "\n";
-//		}
 		Object value = pjp.proceed();
 		try {
 			logInfo = logInfo + "Result: " + value.toString() + "\n";
 			logger.info(logInfo);
 		}catch (NullPointerException e) {
-			
+			logger.warn(e);
 		}
 		
 		if (value != null) {
@@ -51,7 +42,7 @@ public class LoggingAspect {
 	}
 	
 	@Around("execution(* com.revature.controllers.*.*(..))")
-	public Object Logging2(ProceedingJoinPoint pjp) throws Throwable {
+	public Object logging2(ProceedingJoinPoint pjp) throws Throwable {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		String logInfo = "";
 		if (request.getRemoteAddr().equals("") || request.getRemoteAddr() == null) {
@@ -60,7 +51,6 @@ public class LoggingAspect {
 			logInfo = logInfo + "IP Address: " + request.getRemoteAddr() + "\n";
 		}
 		logger.info(logInfo);
-		Object value = pjp.proceed();
-		return value;
+		return pjp.proceed();
 	}
 }
