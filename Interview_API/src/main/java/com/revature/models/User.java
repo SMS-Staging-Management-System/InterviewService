@@ -53,10 +53,9 @@ public class User {
 
 	public User() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public User(int userId, String firstName, String lastName, @NotNull String email, String phoneNumber,
+	public User(int userId, @NotNull String firstName, @NotNull String lastName, @NotNull String email, String phoneNumber,
 			Address address, Set<Cohort> cohorts) {
 		super();
 		this.userId = userId;
@@ -80,7 +79,7 @@ public class User {
 		return firstName;
 	}
 
-	public void setFirstName(String firstName) {
+	public void setFirstName(@NotNull String firstName) {
 		this.firstName = firstName;
 	}
 
@@ -88,7 +87,7 @@ public class User {
 		return lastName;
 	}
 
-	public void setLastName(String lastName) {
+	public void setLastName(@NotNull String lastName) {
 		this.lastName = lastName;
 	}
 
@@ -96,7 +95,7 @@ public class User {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public void setEmail(@NotNull String email) {
 		this.email = email;
 	}
 

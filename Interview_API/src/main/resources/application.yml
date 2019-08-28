@@ -22,14 +22,14 @@ spring:
     driverClassName: org.postgresql.Driver
     initialization-mode: NEVER
     password: ${DB_PASSWORD}
-    url: jdbc:postgresql://${DB_URL}:5432/postgres
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
         default_schema: ${DB_SCHEMA}
@@ -45,7 +45,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: ${DISCOVERY_URL:http://localhost:8888}/eureka/
+      defaultZone: http://localhost:8888/eureka/
   instance:
     lease-renewal-interval-in-seconds: 1
     lease-expiration-duration-in-seconds: 2
