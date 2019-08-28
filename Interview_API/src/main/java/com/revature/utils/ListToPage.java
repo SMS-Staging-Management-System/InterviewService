@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ListToPage {
 	public static PageImpl getPage(List<?> L, Pageable page) {
 		int start = page.getPageNumber()*page.getPageSize();

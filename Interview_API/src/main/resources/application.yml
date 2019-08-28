@@ -14,7 +14,7 @@ gateway:
 
 spring:
   profiles:
-    active: ${DEPLOYMENT_STAGE}
+    active: ${DEPLOYMENT_STAGE:dev}
   application:
     name: interview-service
   
@@ -35,6 +35,16 @@ spring:
         default_schema: ${DB_SCHEMA}
     show-sql: false  
 
+spring.profiles: ${spring.profiles:dev}
+    
+interview-service:
+  ribbon:
+    listOfServers: ${GATEWAY_URL:http://localhost:8765}/interview-service/
+    
+user-service:
+  ribbon:
+    listOfServers: ${GATEWAY_URL:http://localhost:8090}/user-service/
+
 ---
 spring:
   profiles: dev
@@ -50,22 +60,13 @@ eureka:
     lease-renewal-interval-in-seconds: 1
     lease-expiration-duration-in-seconds: 2
     
-    
 ---
 spring:
   profiles: prod
 
 server:
   port: 5000
-  
-eureka:
-  client:
-    enabled: false
-    
-ribbon:
-  eureka: 
-    enabled: false
-    
+
 interview-service:
   ribbon:
     listOfServers: ${GATEWAY_URL}
