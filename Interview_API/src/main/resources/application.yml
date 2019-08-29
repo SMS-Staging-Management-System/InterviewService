@@ -35,8 +35,6 @@ spring:
         default_schema: ${DB_SCHEMA}
     show-sql: false  
 
-spring.profiles: ${spring.profiles:dev}
-    
 interview-service:
   ribbon:
     listOfServers: ${GATEWAY_URL:http://localhost:8765}/interview-service/

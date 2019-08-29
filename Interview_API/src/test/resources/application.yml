@@ -13,7 +13,4 @@ spring:
     username: SA
     password: 
   profiles:
-    active:
-    - test
-    
-spring.profiles: ${spring.profiles:test}
+    active: test

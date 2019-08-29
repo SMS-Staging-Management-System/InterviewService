@@ -105,7 +105,7 @@
 		<dependency>
 			<groupId>com.revature</groupId>
 			<artifactId>CognitoAuth</artifactId>
-			<version>0.0.1</version>
+			<version>0.0.2</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
 		<dependency>
