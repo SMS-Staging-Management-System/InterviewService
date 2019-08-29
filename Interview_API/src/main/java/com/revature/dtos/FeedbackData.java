@@ -7,73 +7,69 @@ public class FeedbackData{
     String feedbackText;
     long feedbackReceivedDate;
     long feedbackDeliveredDate;
-//    String interviewFormat;
-    int statusId;
-    int format;
+    String interviewFormat;
+    
 	public FeedbackData() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
-	public FeedbackData(int interviewId, long feedbackRequestedDate, String feedbackText, long feedbackReceivedDate,
-			long feedbackDeliveredDate, int statusId, int format) {
 
+	public FeedbackData(int interviewId, long feedbackRequestedDate, String feedbackText, long feedbackReceivedDate,
+			long feedbackDeliveredDate, String interviewFormat) {
 		super();
 		this.interviewId = interviewId;
 		this.feedbackRequestedDate = feedbackRequestedDate;
 		this.feedbackText = feedbackText;
 		this.feedbackReceivedDate = feedbackReceivedDate;
 		this.feedbackDeliveredDate = feedbackDeliveredDate;
-//		this.interviewFormat = interviewFormat;
-		this.statusId = statusId;
-		this.format = format;
+		this.interviewFormat = interviewFormat;
 	}
+
 	public int getInterviewId() {
 		return interviewId;
 	}
+
 	public void setInterviewId(int interviewId) {
 		this.interviewId = interviewId;
 	}
+
 	public long getFeedbackRequestedDate() {
 		return feedbackRequestedDate;
 	}
+
 	public void setFeedbackRequestedDate(long feedbackRequestedDate) {
 		this.feedbackRequestedDate = feedbackRequestedDate;
 	}
+
 	public String getFeedbackText() {
 		return feedbackText;
 	}
+
 	public void setFeedbackText(String feedbackText) {
 		this.feedbackText = feedbackText;
 	}
+
 	public long getFeedbackReceivedDate() {
 		return feedbackReceivedDate;
 	}
+
 	public void setFeedbackReceivedDate(long feedbackReceivedDate) {
 		this.feedbackReceivedDate = feedbackReceivedDate;
 	}
+
 	public long getFeedbackDeliveredDate() {
 		return feedbackDeliveredDate;
 	}
+
 	public void setFeedbackDeliveredDate(long feedbackDeliveredDate) {
 		this.feedbackDeliveredDate = feedbackDeliveredDate;
 	}
-	public int getStatusId() {
-		return statusId;
+
+	public String getInterviewFormat() {
+		return interviewFormat;
 	}
-	public void setStatusId(int statusId) {
-		this.statusId = statusId;
-	}
-	public int getFormat() {
-		return format;
-	}
-	public void setFormat(int format) {
-		this.format = format;
-	}
-	@Override
-	public String toString() {
-		return "FeedbackData [interviewId=" + interviewId + ", feedbackRequestedDate=" + feedbackRequestedDate
-				+ ", feedbackText=" + feedbackText + ", feedbackReceivedDate=" + feedbackReceivedDate
-				+ ", feedbackDeliveredDate=" + feedbackDeliveredDate + ", statusId=" + statusId + ", format=" + format + "]";
+
+	public void setInterviewFormat(String interviewFormat) {
+		this.interviewFormat = interviewFormat;
 	}
 
 	@Override
@@ -84,10 +80,8 @@ public class FeedbackData{
 		result = prime * result + (int) (feedbackReceivedDate ^ (feedbackReceivedDate >>> 32));
 		result = prime * result + (int) (feedbackRequestedDate ^ (feedbackRequestedDate >>> 32));
 		result = prime * result + ((feedbackText == null) ? 0 : feedbackText.hashCode());
-
-		result = prime * result + format;
+		result = prime * result + ((interviewFormat == null) ? 0 : interviewFormat.hashCode());
 		result = prime * result + interviewId;
-		result = prime * result + statusId;
 		return result;
 	}
 
@@ -111,14 +105,24 @@ public class FeedbackData{
 				return false;
 		} else if (!feedbackText.equals(other.feedbackText))
 			return false;
-		if (format != other.format)
+		if (interviewFormat == null) {
+			if (other.interviewFormat != null)
+				return false;
+		} else if (!interviewFormat.equals(other.interviewFormat))
 			return false;
 		if (interviewId != other.interviewId)
 			return false;
-		if (statusId != other.statusId)
-			return false;
 		return true;
 	}
-    
 
+	@Override
+	public String toString() {
+		return "FeedbackData [interviewId=" + interviewId + ", feedbackRequestedDate=" + feedbackRequestedDate
+				+ ", feedbackText=" + feedbackText + ", feedbackReceivedDate=" + feedbackReceivedDate
+				+ ", feedbackDeliveredDate=" + feedbackDeliveredDate + ", interviewFormat=" + interviewFormat + "]";
+	}
+	
+	
+
+    
 }

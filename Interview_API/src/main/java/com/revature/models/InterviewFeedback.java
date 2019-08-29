@@ -2,8 +2,10 @@ package com.revature.models;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -46,26 +48,19 @@ public class InterviewFeedback {
 	@JsonIgnore
 	private Interview interview;
 	
-	@OneToOne
-	@JoinColumn(name = "interview_format")
-	private InterviewFormat format;
-
-	public InterviewFeedback() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
 	public InterviewFeedback(int id, Date feedbackRequested, String feedback, Date feedbackReceived,
-			Date feedbackDelivered, FeedbackStatus status, InterviewFormat format) {
+			FeedbackStatus status) {
 		super();
 		this.id = id;
 		this.feedbackRequested = feedbackRequested;
 		this.feedback = feedback;
 		this.feedbackReceived = feedbackReceived;
-		this.feedbackDelivered = feedbackDelivered;
 		this.status = status;
-//		this.interview = interview;
-		this.format = format;
+	}
+
+	public InterviewFeedback() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	public int getId() {
@@ -108,15 +103,6 @@ public class InterviewFeedback {
 		this.status = status;
 	}
 
-	public InterviewFormat getFormat() {
-		return format;
-	}
-
-	public void setFormat(InterviewFormat format) {
-		this.format = format;
-	}
-
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -125,9 +111,7 @@ public class InterviewFeedback {
 		result = prime * result + ((feedbackDelivered == null) ? 0 : feedbackDelivered.hashCode());
 		result = prime * result + ((feedbackReceived == null) ? 0 : feedbackReceived.hashCode());
 		result = prime * result + ((feedbackRequested == null) ? 0 : feedbackRequested.hashCode());
-		result = prime * result + ((format == null) ? 0 : format.hashCode());
 		result = prime * result + id;
-//		result = prime * result + ((interview == null) ? 0 : interview.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		return result;
 	}
@@ -161,11 +145,6 @@ public class InterviewFeedback {
 				return false;
 		} else if (!feedbackRequested.equals(other.feedbackRequested))
 			return false;
-		if (format == null) {
-			if (other.format != null)
-				return false;
-		} else if (!format.equals(other.format))
-			return false;
 		if (id != other.id)
 			return false;
 		if (status == null) {
@@ -175,4 +154,7 @@ public class InterviewFeedback {
 			return false;
 		return true;
 	}
+
+	
+	
 }
