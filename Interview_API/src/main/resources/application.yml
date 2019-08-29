@@ -22,7 +22,7 @@ spring:
     driverClassName: org.postgresql.Driver
     initialization-mode: NEVER
     password: ${DB_PASSWORD}
-    url: ${DB_URL}
+    url: ${DB_URL_INTERVIEW}
     username: ${DB_USERNAME}
     
   jpa:
@@ -37,7 +37,7 @@ spring:
     
 interview-service:
   ribbon:
-    listOfServers: ${GATEWAY_URL:http://localhost:8765}/interview-service/
+    listOfServers: ${GATEWAY_URL}/interview-service/
     
 user-service:
   ribbon:
@@ -56,7 +56,7 @@ spring:
 
 server:
   port: 5000
-
+  
 interview-service:
   ribbon:
     listOfServers: ${GATEWAY_URL}

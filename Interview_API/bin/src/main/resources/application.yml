@@ -6,10 +6,11 @@ logging:
         web: DEBUG
     root: ALL
     
----
 cognito:
   url: ${COGNITO_URL}
   key: ${COGNITO_KEY}
+gateway:
+  url: ${GATEWAY_URL}
 
 spring:
   profiles:
@@ -21,7 +22,7 @@ spring:
     driverClassName: org.postgresql.Driver
     initialization-mode: NEVER
     password: ${DB_PASSWORD}
-    url: jdbc:postgresql://${DB_URL}:5432/postgres
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     
   jpa:
@@ -33,20 +34,31 @@ spring:
       hibernate:
         default_schema: ${DB_SCHEMA}
     show-sql: false  
+    
+interview-service:
+  ribbon:
+    listOfServers: ${GATEWAY_URL:http://localhost:8765}/interview-service/
+    
+user-service:
+  ribbon:
+    listOfServers: http://localhost:8090
 
 ---
 spring:
   profiles: dev
 
 server:
-  port: 8091
+  port: 8091 
+    
+---
+spring:
+  profiles: prod
 
-eureka:
-  client:
-    service-url:
-      defaultZone: ${DISCOVERY_URL:http://localhost:8888}/eureka/
-  instance:
-    lease-renewal-interval-in-seconds: 1
-    lease-expiration-duration-in-seconds: 2
+server:
+  port: 5000
+
+interview-service:
+  ribbon:
+    listOfServers: ${GATEWAY_URL}
    
   

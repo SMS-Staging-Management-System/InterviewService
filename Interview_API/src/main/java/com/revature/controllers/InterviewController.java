@@ -1,24 +1,21 @@
 package com.revature.controllers;
 
-import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.cognito.annotations.CognitoAuth;
@@ -35,16 +31,15 @@ import com.revature.dtos.FeedbackData;
 import com.revature.dtos.FeedbackStat;
 import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
-import com.revature.models.FeedbackStatus;
-import com.revature.models.Interview;
-import com.revature.models.InterviewFeedback;
+import com.revature.dtos.NewAssociateInput;
 import com.revature.dtos.NewInterviewData;
 import com.revature.dtos.NumberOfInterviewsCount;
 import com.revature.dtos.UserDto;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.feign.IUserClient;
+import com.revature.models.Interview;
+import com.revature.models.InterviewFeedback;
 import com.revature.models.User;
-import com.revature.dtos.NewAssociateInput;
 import com.revature.services.InterviewService;
 import com.revature.services.InterviewSpecifications;
 import com.revature.utils.ListToPage;
@@ -110,6 +105,24 @@ public class InterviewController {
         
         return interviewService.findAllByAssociateEmail(email, pageParameters);
     }
+	
+	//Mine
+	@GetMapping("/ed")
+	public Page<Interview> getInterviewPage(
+            @RequestParam(name="orderBy", defaultValue="id") String orderBy,
+            @RequestParam(name="direction", defaultValue="ASC") String direction,
+            @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
+            @RequestParam(name="pageSize", defaultValue="5") Integer pageSize,
+            @RequestParam(value = "search") String search) {
+		// Example url call: ~:8091/interview/page?pageNumber=0&pageSize=3
+		// The above url will return the 0th page of size 3.
+		
+		Sort sorter = new Sort(Sort.Direction.valueOf(direction), orderBy);
+        Pageable pageParameters = PageRequest.of(pageNumber, pageSize, sorter);
+        
+        return interviewService.findAllEd(search, pageParameters);
+    }
+	
 	
 	@CognitoAuth(roles = {"staging-manager", "admin", "trainer"})
 	@GetMapping("/page")
@@ -185,6 +198,8 @@ public class InterviewController {
 		return pageAssoc;
 		}
     }
+	
+	
 	
 	//returns 2 numbers in a list
 	//the first is the number of users
