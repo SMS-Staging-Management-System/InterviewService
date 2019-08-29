@@ -28,7 +28,6 @@
 
 	<dependencies>
 
-
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
@@ -56,6 +55,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -103,17 +106,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.revature</groupId>
-			<artifactId>CognitoAuth</artifactId>
-			<version>0.0.1</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>test</scope>
-		</dependency>
-
+            <groupId>com.revature</groupId>
+            <artifactId>CognitoAuth</artifactId>
+            <version>0.0.1</version>
+        </dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -134,21 +130,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.2</version>
-			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.sonarsource.scanner.maven</groupId>
-					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.6.0.1398</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<repositories>
@@ -161,8 +143,8 @@
 			</snapshots>
 		</repository>
 		<repository>
-			<id>my-repo-bucket-release</id>
-			<url>https://s3.amazonaws.com/sms-cognito-auth/release</url>
-		</repository>
+            <id>my-repo-bucket-release</id>
+            <url>https://s3.amazonaws.com/sms-cognito-auth/release</url>
+        </repository>
 	</repositories>
 </project>
