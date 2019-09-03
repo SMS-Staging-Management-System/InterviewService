@@ -33,6 +33,7 @@ public interface InterviewService {
 	FeedbackStatus findStatusById(Integer id);
 	List<Interview> findAll();
 	List<Interview> findAllTest();
+	Page<Interview> findAllWithFilters(String search, Pageable pageParameters);
 	//Page<Interview> getInterviewsStaging(Specification<Interview> spec, Pageable pageable);
 	List<Interview> getInterviewsStaging();
 	Page<Interview> findAll(Specification<Interview> spec, Pageable pageable);

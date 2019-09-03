@@ -1,7 +1,5 @@
 package com.revature.services;
 
-import javax.persistence.criteria.Join;
-
 import org.springframework.data.jpa.domain.Specification;
 
 import com.revature.models.Interview;
