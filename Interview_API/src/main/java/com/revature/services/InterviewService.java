@@ -28,7 +28,9 @@ public interface InterviewService {
 	Interview update(Interview i);
 	Interview delete(Interview i);
 	Interview findById(Integer id);
+	
 	Interview findByAssociateEmail(String s);
+	
 	Interview findByManagerEmail(String s);
 	FeedbackStatus findStatusById(Integer id);
 	List<Interview> findAll();
@@ -43,7 +45,9 @@ public interface InterviewService {
 	Interview addNewInterview(NewInterviewData i);
 	Interview addAssociateInput(NewAssociateInput a);
 	Page<Interview> findAll(Pageable page);
+	
 	Page<Interview> findAllByAssociateEmail(String email, Pageable page);
+	
 	List<AssociateInterview> findInterviewsPerAssociate();
 	Page<AssociateInterview> findInterviewsPerAssociate(Pageable page);
 	NumberOfInterviewsCount findAssociateInterviewsData();

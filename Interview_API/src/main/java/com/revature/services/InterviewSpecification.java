@@ -8,8 +8,10 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import com.revature.models.AssociateInput;
 import com.revature.models.Client;
 import com.revature.models.Interview;
+import com.revature.models.InterviewFeedback;
 import com.revature.utils.SearchCriteria;
 
 
@@ -59,11 +61,33 @@ public class InterviewSpecification implements Specification<Interview> {
 	            	//Join allows us to filter client fields from Interview.client; see clientJoin below replaces root
 	            	 return builder.like(
 	            			 clientJoin.get("clientName"), "%" + criteria.getValue() + "%");
+	            	 
+	            } else if (root.get(criteria.getKey()).getJavaType() == AssociateInput.class){
+	            	
+	            	if(criteria.getValue().equals("null")) {
+	            		System.out.println(criteria.getValue());
+	            		return builder.isNull(
+	            			 root.get("associateInput"));}
+	            	
+	            	else {return builder.isNotNull(
+	            			 root.get("associateInput"));}
+	            	
+	            } else if (root.get(criteria.getKey()).getJavaType() == InterviewFeedback.class){
+	            	
+	            	if(criteria.getValue().equals("null")) {
+	            		System.out.println(criteria.getValue());
+	            		return builder.isNull(
+	            			 root.get("feedback"));}
+	            	
+	            	else {return builder.isNotNull(
+	            			 root.get("feedback"));}
+	            	
 	            }
 	           
 	            else {
 	                return builder.equal(root.get(criteria.getKey()), criteria.getValue());
 	            }
+	            
 	        }
 	        return null;
 	    }

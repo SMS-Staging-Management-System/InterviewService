@@ -16,6 +16,7 @@ import com.revature.models.Interview;
 public interface InterviewRepo extends JpaRepository<Interview, Integer>, JpaSpecificationExecutor<Interview> {
 	
 	List<Interview> findByAssociateEmail(String email);
+	
 	List<Interview> findByScheduledBetween(Date first, Date last);
 
 	Optional<Interview> save(Optional<Interview> i);

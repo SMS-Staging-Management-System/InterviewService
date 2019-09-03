@@ -155,6 +155,27 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 	
 	
+	public Page<Interview> findAllByAssociateEmail(String search, Pageable page) {
+		
+		InterviewSpecificationsBuilder builder = new InterviewSpecificationsBuilder();
+		
+		//This regular expression matches the pattern below. In the search string this looks like key:value
+		//Where key and value are non white space characters (\\S) and not * (&&[^*])
+		Pattern pattern = Pattern.compile("([\\S&&[^*]]+?)(:|<|>)([\\S&&[^*]]+?),");
+		Matcher matcher = pattern.matcher(search.replace("*,", "*").replace(" ", "_") + ",");
+		while (matcher.find()) {
+			System.out.println(matcher.group(3));
+			builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+		}
+
+		Specification<Interview> spec = builder.build();
+		
+		
+		return interviewRepo.findAll(spec, page);
+	}
+	
+	
+	
 	@Override
 	public Page<Interview> findAll(Specification<Interview> spec, Pageable pageable) {
 		// TODO Auto-generated method stub
@@ -680,11 +701,6 @@ public class InterviewServiceImpl implements InterviewService {
 		return null;
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	public Page<Interview> findAllByAssociateEmail(String email, Pageable page) {
-		PageImpl PI = ListToPage.getPage(interviewRepo.findByAssociateEmail(email), page);
-		return PI;
-	}
 	@Override
 	public List<Interview> findByScheduledWeek(Date date) {
 		

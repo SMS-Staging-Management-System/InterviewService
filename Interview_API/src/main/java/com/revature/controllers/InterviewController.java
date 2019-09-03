@@ -2,17 +2,14 @@ package com.revature.controllers;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +38,6 @@ import com.revature.models.Interview;
 import com.revature.models.InterviewFeedback;
 import com.revature.models.User;
 import com.revature.services.InterviewService;
-import com.revature.services.InterviewSpecifications;
-import com.revature.utils.ListToPage;
 
 @RestController
 @RequestMapping("interview")
@@ -91,23 +86,23 @@ public class InterviewController {
 //		return new ResponseEntity<User>(user,headers,HttpStatus.OK);
 //	}
 	
-	@CognitoAuth(roles = {})
+	//@CognitoAuth(roles = {})
 	@GetMapping("/pages")
 	public Page<Interview> getInterviewPageByAssociateEmail(
             @RequestParam(name="orderBy", defaultValue="id") String orderBy,
             @RequestParam(name="direction", defaultValue="ASC") String direction,
             @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
             @RequestParam(name="pageSize", defaultValue="5") Integer pageSize,
-            @RequestParam(name="email") String email) {
+            @RequestParam(value = "search") String search) {
 		
 		Sort sorter = new Sort(Sort.Direction.valueOf(direction), orderBy);
         Pageable pageParameters = PageRequest.of(pageNumber, pageSize, sorter);
         
-        return interviewService.findAllByAssociateEmail(email, pageParameters);
+        return interviewService.findAllByAssociateEmail(search, pageParameters);
     }
 	
 	//Mine
-	@GetMapping("/ed")
+	@GetMapping("/page")
 	public Page<Interview> getInterviewPage(
             @RequestParam(name="orderBy", defaultValue="id") String orderBy,
             @RequestParam(name="direction", defaultValue="ASC") String direction,
@@ -124,80 +119,80 @@ public class InterviewController {
     }
 	
 	
-	@CognitoAuth(roles = {"staging-manager", "admin", "trainer"})
-	@GetMapping("/page")
-	public Page<Interview> getInterviewPage(
-            @RequestParam(name="orderBy", defaultValue="id") String orderBy,
-            @RequestParam(name="direction", defaultValue="ASC") String direction,
-            @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
-            @RequestParam(name="pageSize", defaultValue="5") Integer pageSize,
-            @RequestParam(name="associateEmail", defaultValue="associateEmail") String associateEmail,
-            @RequestParam(name="managerEmail", defaultValue="managerEmail") String managerEmail,
-            @RequestParam(name="place", defaultValue="placeName") String place,
-            @RequestParam(name="clientName", defaultValue="clientName") String clientName,
-            @RequestParam(name="staging", defaultValue="stagingOff") String staging) {
-		
-		Sort sorter = new Sort(Sort.Direction.valueOf(direction), orderBy);
-        Pageable pageParameters = PageRequest.of(pageNumber, pageSize, sorter);
-        
-      if(!staging.equals("stagingOff")) {   	    			
-    	List<Interview> interviewsStagingFiltered = interviewService.getInterviewsStaging().stream().filter((item) -> {
-    		String associateEmailInputStaging;
-    		if(associateEmail.equals("associateEmail")) {
-    			associateEmailInputStaging = ".*";		
-    		} else associateEmailInputStaging = associateEmail;
-      		
-    		String managerEmailInputStaging;
-    		if(managerEmail.equals("managerEmail")) {
-      			managerEmailInputStaging = ".*";
-      		} else managerEmailInputStaging = managerEmail;
-    		
-    		String placeInputStaging;
-      		if(place.equals("placeName")) {
-      			placeInputStaging = ".*"; 		
-      		} else placeInputStaging = place;
-      		
-      		String clientNameInputStaging;
-      		if(clientName.equals("clientName")) {
-      			clientNameInputStaging = ".*";
-      		} else clientNameInputStaging = clientName;
-      		
-			return item.getAssociateEmail().matches(associateEmailInputStaging) 
-					&& item.getManagerEmail().matches(managerEmailInputStaging) 
-					&& item.getPlace().matches(placeInputStaging) 
-					&& item.getClient().getClientName().matches(clientNameInputStaging);
-    	}).collect(Collectors.toList());
-    	
-  		PageImpl interviewsPage = ListToPage.getPage(interviewsStagingFiltered, pageParameters);
-  		return interviewsPage;
-		} else {
-      
-      	String associateEmailInput;
-		String managerEmailInput;
-		String placeInput;
-		String clientNameInput;
-		
-		if(associateEmail.equals("associateEmail")) {
-			associateEmailInput = "%";
-		} else associateEmailInput = associateEmail;
-		if(managerEmail.equals("managerEmail")) {
-			managerEmailInput = "%";
-		} else managerEmailInput = managerEmail;
-		if(place.equals("placeName")) {
-			placeInput = "%";
-		} else placeInput = place;
-		if(clientName.equals("clientName")) {
-			clientNameInput = "%";
-		} else clientNameInput = clientName;
-        
-        Page<Interview> pageAssoc = interviewService.findAll(Specification.where(InterviewSpecifications.hasAssociateEmail(associateEmailInput))
-				.and(InterviewSpecifications.hasManagerEmail(managerEmailInput))
-				.and(InterviewSpecifications.hasPlace(placeInput))
-				.and(InterviewSpecifications.hasClient(clientNameInput)), pageParameters);
-        
-		return pageAssoc;
-		}
-    }
+//	@CognitoAuth(roles = {"staging-manager", "admin", "trainer"})
+//	@GetMapping("/page")
+//	public Page<Interview> getInterviewPage(
+//            @RequestParam(name="orderBy", defaultValue="id") String orderBy,
+//            @RequestParam(name="direction", defaultValue="ASC") String direction,
+//            @RequestParam(name="pageNumber", defaultValue="0") Integer pageNumber,
+//            @RequestParam(name="pageSize", defaultValue="5") Integer pageSize,
+//            @RequestParam(name="associateEmail", defaultValue="associateEmail") String associateEmail,
+//            @RequestParam(name="managerEmail", defaultValue="managerEmail") String managerEmail,
+//            @RequestParam(name="place", defaultValue="placeName") String place,
+//            @RequestParam(name="clientName", defaultValue="clientName") String clientName,
+//            @RequestParam(name="staging", defaultValue="stagingOff") String staging) {
+//		
+//		Sort sorter = new Sort(Sort.Direction.valueOf(direction), orderBy);
+//        Pageable pageParameters = PageRequest.of(pageNumber, pageSize, sorter);
+//        
+//      if(!staging.equals("stagingOff")) {   	    			
+//    	List<Interview> interviewsStagingFiltered = interviewService.getInterviewsStaging().stream().filter((item) -> {
+//    		String associateEmailInputStaging;
+//    		if(associateEmail.equals("associateEmail")) {
+//    			associateEmailInputStaging = ".*";		
+//    		} else associateEmailInputStaging = associateEmail;
+//      		
+//    		String managerEmailInputStaging;
+//    		if(managerEmail.equals("managerEmail")) {
+//      			managerEmailInputStaging = ".*";
+//      		} else managerEmailInputStaging = managerEmail;
+//    		
+//    		String placeInputStaging;
+//      		if(place.equals("placeName")) {
+//      			placeInputStaging = ".*"; 		
+//      		} else placeInputStaging = place;
+//      		
+//      		String clientNameInputStaging;
+//      		if(clientName.equals("clientName")) {
+//      			clientNameInputStaging = ".*";
+//      		} else clientNameInputStaging = clientName;
+//      		
+//			return item.getAssociateEmail().matches(associateEmailInputStaging) 
+//					&& item.getManagerEmail().matches(managerEmailInputStaging) 
+//					&& item.getPlace().matches(placeInputStaging) 
+//					&& item.getClient().getClientName().matches(clientNameInputStaging);
+//    	}).collect(Collectors.toList());
+//    	
+//  		PageImpl interviewsPage = ListToPage.getPage(interviewsStagingFiltered, pageParameters);
+//  		return interviewsPage;
+//		} else {
+//      
+//      	String associateEmailInput;
+//		String managerEmailInput;
+//		String placeInput;
+//		String clientNameInput;
+//		
+//		if(associateEmail.equals("associateEmail")) {
+//			associateEmailInput = "%";
+//		} else associateEmailInput = associateEmail;
+//		if(managerEmail.equals("managerEmail")) {
+//			managerEmailInput = "%";
+//		} else managerEmailInput = managerEmail;
+//		if(place.equals("placeName")) {
+//			placeInput = "%";
+//		} else placeInput = place;
+//		if(clientName.equals("clientName")) {
+//			clientNameInput = "%";
+//		} else clientNameInput = clientName;
+//        
+//        Page<Interview> pageAssoc = interviewService.findAll(Specification.where(InterviewSpecifications.hasAssociateEmail(associateEmailInput))
+//				.and(InterviewSpecifications.hasManagerEmail(managerEmailInput))
+//				.and(InterviewSpecifications.hasPlace(placeInput))
+//				.and(InterviewSpecifications.hasClient(clientNameInput)), pageParameters);
+//        
+//		return pageAssoc;
+//		}
+//    }
 	
 	
 	
