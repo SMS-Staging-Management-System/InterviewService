@@ -14,7 +14,7 @@ gateway:
 
 spring:
   profiles:
-    active: ${DEPLOYMENT_STAGE}
+    active: ${DEPLOYMENT_STAGE:dev}
   application:
     name: interview-service
   
@@ -34,14 +34,14 @@ spring:
       hibernate:
         default_schema: ${DB_SCHEMA}
     show-sql: false  
-    
+
 interview-service:
   ribbon:
     listOfServers: ${GATEWAY_URL}/interview-service/
     
 user-service:
   ribbon:
-    listOfServers: http://localhost:8090
+    listOfServers: ${GATEWAY_URL:http://localhost:8090}/user-service/
 
 ---
 spring:

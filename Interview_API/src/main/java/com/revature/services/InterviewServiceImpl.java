@@ -106,6 +106,25 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 
 
+	public Page<Interview> findAllWithFilters(String search, Pageable pageable) {
+
+		InterviewSpecificationsBuilder builder = new InterviewSpecificationsBuilder();
+		
+		//This regular expression matches the pattern below. In the search string this looks like key:value
+		//Where key and value are non white space characters (\\S) and not * (&&[^*])
+		Pattern pattern = Pattern.compile("([\\S&&[^*]]+?)(:|<|>)([\\S&&[^*]]+?),");
+		Matcher matcher = pattern.matcher(search.replace("*,", "*").replace(" ", "_") + ",");
+		while (matcher.find()) {
+			System.out.println(matcher.group(3));
+			builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+		}
+
+		Specification<Interview> spec = builder.build();
+
+		return interviewRepo.findAll(spec, pageable);
+	}
+	
+	
 	public Interview addNewInterview(NewInterviewData i) {
 		
 		String managerEmail = i.getManagerEmail(); 
@@ -133,45 +152,6 @@ public class InterviewServiceImpl implements InterviewService {
 
 	public Page<Interview> findAll(Pageable page) {
 		return interviewRepo.findAll(page);
-	}
-	
-	//MINE
-	public Page<Interview> findAllEd(String search, Pageable pageable) {
-
-		InterviewSpecificationsBuilder builder = new InterviewSpecificationsBuilder();
-		
-		//This regular expression matches the pattern below. In the search string this looks like key:value
-		//Where key and value are non white space characters (\\S) and not * (&&[^*])
-		Pattern pattern = Pattern.compile("([\\S&&[^*]]+?)(:|<|>)([\\S&&[^*]]+?),");
-		Matcher matcher = pattern.matcher(search.replace("*,", "*").replace(" ", "_") + ",");
-		while (matcher.find()) {
-			System.out.println(matcher.group(3));
-			builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-		}
-
-		Specification<Interview> spec = builder.build();
-
-		return interviewRepo.findAll(spec, pageable);
-	}
-	
-	
-	public Page<Interview> findAllByAssociateEmail(String search, Pageable page) {
-		
-		InterviewSpecificationsBuilder builder = new InterviewSpecificationsBuilder();
-		
-		//This regular expression matches the pattern below. In the search string this looks like key:value
-		//Where key and value are non white space characters (\\S) and not * (&&[^*])
-		Pattern pattern = Pattern.compile("([\\S&&[^*]]+?)(:|<|>)([\\S&&[^*]]+?),");
-		Matcher matcher = pattern.matcher(search.replace("*,", "*").replace(" ", "_") + ",");
-		while (matcher.find()) {
-			System.out.println(matcher.group(3));
-			builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-		}
-
-		Specification<Interview> spec = builder.build();
-		
-		
-		return interviewRepo.findAll(spec, page);
 	}
 	
 	

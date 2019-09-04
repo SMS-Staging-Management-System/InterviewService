@@ -8,10 +8,13 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
 
+
 import com.revature.models.AssociateInput;
 import com.revature.models.Client;
 import com.revature.models.Interview;
 import com.revature.models.InterviewFeedback;
+
+
 import com.revature.utils.SearchCriteria;
 
 
@@ -82,12 +85,13 @@ public class InterviewSpecification implements Specification<Interview> {
 	            	else {return builder.isNotNull(
 	            			 root.get("feedback"));}
 	            	
+
 	            }
 	           
 	            else {
 	                return builder.equal(root.get(criteria.getKey()), criteria.getValue());
 	            }
-	            
+
 	        }
 	        return null;
 	    }

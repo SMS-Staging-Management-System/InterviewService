@@ -35,18 +35,18 @@ public interface InterviewService {
 	FeedbackStatus findStatusById(Integer id);
 	List<Interview> findAll();
 	List<Interview> findAllTest();
-	//Page<Interview> getInterviewsStaging(Specification<Interview> spec, Pageable pageable);
+	Page<Interview> findAllWithFilters(String search, Pageable pageParameters);
+	
+
 	List<Interview> getInterviewsStaging();
 	
 	Page<Interview> findAll(Specification<Interview> spec, Pageable pageable);
 	
-	Page<Interview> findAllEd(String search, Pageable pageable); //<My Method
 	
 	Interview addNewInterview(NewInterviewData i);
 	Interview addAssociateInput(NewAssociateInput a);
-	Page<Interview> findAll(Pageable page);
 	
-	Page<Interview> findAllByAssociateEmail(String email, Pageable page);
+	Page<Interview> findAll(Pageable page);
 	
 	List<AssociateInterview> findInterviewsPerAssociate();
 	Page<AssociateInterview> findInterviewsPerAssociate(Pageable page);
