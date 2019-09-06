@@ -14,7 +14,7 @@ Interview API for Staging Management System for Revature.
     * "DB_USERNAME": DB username,
     * "DB_PASSWORD": DB password,
     * "DB_SCHEMA": Schema where you have the tables saved - for dev this is probably interview_service, 
-    * "GATEWAY_URL": Gateway or Discovery Service URL (i.e. localhost:port")
+    * "GATEWAY_URL": Gateway or Discovery Service URL (i.e. localhost:port)
 5. Start running the Gateway Service and the Service Registry (requires addiional cognito config) - for development you just need the master branch gateway service (09/06/19) which doesn't include Eureka.
 6. Start up this microservice
 7. (Optional) You will probably need to start up the User Service to get all of the Cohorts and Associates for New Interview Component on the UI (requires addiional cognito and database config)
