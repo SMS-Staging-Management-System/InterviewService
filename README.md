@@ -31,7 +31,7 @@ Interview API for Staging Management System for Revature.
    * The toPredicate implementation handles user input with key, value pairs which are column, value pairs respectively.
       * example: findAll(Specification spec)
          * The resulting query is: 'SELECT * from Table/root<EntityType> WHERE(provided by toPredicate) column/key LIKE %value%'
-            *% wild card allows dynamic querys with partial values, example: fo will return food
+            * % wild card allows dynamic querys with partial values, example: fo will return food
 * The previous interation needed corresponding lines of code for each and every filter but with Specification we can now handle any search string dynamically.
 
 # Bugs
