@@ -20,7 +20,7 @@ Interview API for Staging Management System for Revature.
 7. (Optional) You will probably need to start up the User Service to get all of the Cohorts and Associates for New Interview Component on the UI (requires addiional cognito and database config)
 
 # Step 2 - Set up UI
-1. npm install
+1. npm install - you may need to additionally install node-sass
 2. npm start
   no additional environment variable configuration if running services locally
 
