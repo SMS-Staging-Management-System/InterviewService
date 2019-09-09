@@ -23,6 +23,16 @@ Interview API for Staging Management System for Revature.
 1. npm install
 2. npm start
   no additional environment variable configuration if running services locally
+  
+# Backend Filter Implementation - Spring Data Specification
+* Utilized Spring Data Sepcification which is a High level interface that implements the Criteria API!
+* Implemented the Specification interface and its toPredicate abstract method to define reusable predicates over entities.
+* Executed defined predicates via Criteria wrapped into Specification objects that were then passed as arguments to custom Spring Data query methods.
+   * The toPredicate implementation handles user input with key, value pairs which are column, value pairs respectively.
+      * example: findAll(Specification spec)
+         * The resulting query is: 'SELECT * from Table/root<EntityType> WHERE(provided by toPredicate) column/key LIKE %value%'
+            * % wild card allows dynamic querys with partial values, example: fo will return food
+* The previous interation needed corresponding lines of code for each and every filter but with Specification we can now handle any search string dynamically.
 
 # Bugs
 * Feign calls need to be done after pagination to optimize and speed up calls. 
