@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -30,7 +29,7 @@ import com.revature.repos.InterviewRepo;
 public class InterviewServiceImplTest {
 	
 	@InjectMocks
-	private InterviewServiceImpl interviewService = new InterviewServiceImpl();
+	private InterviewServiceImpl interviewServiceTest = new InterviewServiceImpl();
 	
 	@Mock
 	CognitoUtil cognitoUtil;
@@ -56,7 +55,7 @@ public class InterviewServiceImplTest {
 	
 	@Test
 	public void saveTest() {
-		assertThat(interviewService.save(new Interview())).isNull();
+		assertThat(interviewServiceTest.save(new Interview())).isNull();
 	}
 	
 	@Test 
@@ -69,7 +68,7 @@ public class InterviewServiceImplTest {
 		Mockito.when(interviewRepo.save(interview)).thenReturn(expectedInterview);
 		
 		// Call
-		Interview returnedInterview = interviewService.update(interview);
+		Interview returnedInterview = interviewServiceTest.update(interview);
 		
 		// Verify repo method is called passing interview to it
 		Mockito.verify(interviewRepo, Mockito.times(1)).save(interview);
@@ -87,7 +86,7 @@ public class InterviewServiceImplTest {
 		findAllSetup(roles);
 		
 		// Call
-		List<Interview> returnedInterviews = interviewService.findAll();
+		List<Interview> returnedInterviews = interviewServiceTest.findAll();
 		findAllExpectAll(returnedInterviews);
 	}
 	
@@ -98,7 +97,7 @@ public class InterviewServiceImplTest {
 		findAllSetup(roles);
 		
 		// Call
-		List<Interview> returnedInterviews = interviewService.findAll();
+		List<Interview> returnedInterviews = interviewServiceTest.findAll();
 		
 		findAllExpectAll(returnedInterviews);
 	}
@@ -110,7 +109,7 @@ public class InterviewServiceImplTest {
 		findAllSetup(roles);
 		
 		// Call
-		List<Interview> returnedInterviews = interviewService.findAll();
+		List<Interview> returnedInterviews = interviewServiceTest.findAll();
 		
 		findAllExpectSubset(returnedInterviews);
 	}
@@ -122,7 +121,7 @@ public class InterviewServiceImplTest {
 		findAllSetup(roles);
 		
 		// Call
-		List<Interview> returnedInterviews = interviewService.findAll();
+		List<Interview> returnedInterviews = interviewServiceTest.findAll();
 		
 		findAllExpectSubset(returnedInterviews);
 	}
@@ -135,7 +134,7 @@ public class InterviewServiceImplTest {
 		findAllSetup(roles);
 		
 		// Call
-		List<Interview> returnedInterviews = interviewService.findAll();
+		List<Interview> returnedInterviews = interviewServiceTest.findAll();
 		
 		findAllExpectAll(returnedInterviews);
 	}
@@ -182,7 +181,7 @@ public class InterviewServiceImplTest {
 		Mockito.when(userClient.findByEmail(email)).thenReturn(response);
 		
 		// Call
-		User returnedUser = interviewService.getByEmail(email);
+		User returnedUser = interviewServiceTest.getByEmail(email);
 		
 		// Verify findByEmail is called once with email
 		Mockito.verify(userClient, Mockito.times(1)).findByEmail(email);
@@ -190,5 +189,4 @@ public class InterviewServiceImplTest {
 		// Assert that getByEmail returns the user passed as the body from findByEmail
 		assertThat(user).isEqualTo(returnedUser);
 	}
-	
 }

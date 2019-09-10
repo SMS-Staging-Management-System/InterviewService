@@ -3,25 +3,23 @@ package com.revature.services;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import com.revature.models.StatusHistory;
-import org.springframework.stereotype.Service;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import com.revature.cognito.constants.CognitoRoles;
 import com.revature.cognito.utils.CognitoUtil;
@@ -34,8 +32,8 @@ import com.revature.dtos.InterviewAssociateJobData;
 import com.revature.dtos.NewAssociateInput;
 import com.revature.dtos.NewInterviewData;
 import com.revature.dtos.NumberOfInterviewsCount;
-import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.dtos.UserDto;
+import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.feign.IUserClient;
 import com.revature.models.AssociateInput;
 import com.revature.models.Client;
@@ -49,7 +47,6 @@ import com.revature.repos.ClientRepo;
 import com.revature.repos.FeedbackRepo;
 import com.revature.repos.FeedbackStatusRepo;
 import com.revature.repos.InterviewFormatRepo;
-
 import com.revature.repos.InterviewRepo;
 import com.revature.utils.ListToPage;
 
@@ -109,6 +106,25 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 
 
+	public Page<Interview> findAllWithFilters(String search, Pageable pageable) {
+
+		InterviewSpecificationsBuilder builder = new InterviewSpecificationsBuilder();
+		
+		//This regular expression matches the pattern below. In the search string this looks like key:value
+		//Where key and value are non white space characters (\\S) and not * (&&[^*])
+		Pattern pattern = Pattern.compile("([\\S&&[^*]]+?)(:|<|>)([\\S&&[^*]]+?),");
+		Matcher matcher = pattern.matcher(search.replace("*,", "*").replace(" ", "_") + ",");
+		while (matcher.find()) {
+			System.out.println(matcher.group(3));
+			builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+		}
+
+		Specification<Interview> spec = builder.build();
+
+		return interviewRepo.findAll(spec, pageable);
+	}
+	
+	
 	public Interview addNewInterview(NewInterviewData i) {
 		
 		String managerEmail = i.getManagerEmail(); 
@@ -137,6 +153,8 @@ public class InterviewServiceImpl implements InterviewService {
 	public Page<Interview> findAll(Pageable page) {
 		return interviewRepo.findAll(page);
 	}
+	
+	
 	
 	@Override
 	public Page<Interview> findAll(Specification<Interview> spec, Pageable pageable) {
@@ -663,11 +681,6 @@ public class InterviewServiceImpl implements InterviewService {
 		return null;
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	public Page<Interview> findAllByAssociateEmail(String email, Pageable page) {
-		PageImpl PI = ListToPage.getPage(interviewRepo.findByAssociateEmail(email), page);
-		return PI;
-	}
 	@Override
 	public List<Interview> findByScheduledWeek(Date date) {
 		

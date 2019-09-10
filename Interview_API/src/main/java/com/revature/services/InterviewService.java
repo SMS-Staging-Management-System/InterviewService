@@ -3,21 +3,21 @@ package com.revature.services;
 import java.util.Date;
 import java.util.List;
 
-import com.revature.dtos.AssociateInterview;
-import com.revature.dtos.NewAssociateInput;
-import com.revature.dtos.NewInterviewData;
-import com.revature.dtos.NumberOfInterviewsCount;
-import com.revature.models.FeedbackStatus;
-import com.revature.dtos.UserDto;
-import com.revature.models.Interview;
-import org.springframework.data.jpa.domain.Specification;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
+import com.revature.dtos.AssociateInterview;
 import com.revature.dtos.FeedbackData;
 import com.revature.dtos.FeedbackStat;
 import com.revature.dtos.Interview24Hour;
 import com.revature.dtos.InterviewAssociateJobData;
+import com.revature.dtos.NewAssociateInput;
+import com.revature.dtos.NewInterviewData;
+import com.revature.dtos.NumberOfInterviewsCount;
+import com.revature.dtos.UserDto;
+import com.revature.models.FeedbackStatus;
+import com.revature.models.Interview;
 import com.revature.models.InterviewFeedback;
 import com.revature.models.InterviewFormat;
 import com.revature.models.User;
@@ -28,18 +28,26 @@ public interface InterviewService {
 	Interview update(Interview i);
 	Interview delete(Interview i);
 	Interview findById(Integer id);
+	
 	Interview findByAssociateEmail(String s);
+	
 	Interview findByManagerEmail(String s);
 	FeedbackStatus findStatusById(Integer id);
 	List<Interview> findAll();
 	List<Interview> findAllTest();
-	//Page<Interview> getInterviewsStaging(Specification<Interview> spec, Pageable pageable);
+	Page<Interview> findAllWithFilters(String search, Pageable pageParameters);
+	
+
 	List<Interview> getInterviewsStaging();
+	
 	Page<Interview> findAll(Specification<Interview> spec, Pageable pageable);
+	
+	
 	Interview addNewInterview(NewInterviewData i);
 	Interview addAssociateInput(NewAssociateInput a);
+	
 	Page<Interview> findAll(Pageable page);
-	Page<Interview> findAllByAssociateEmail(String email, Pageable page);
+	
 	List<AssociateInterview> findInterviewsPerAssociate();
 	Page<AssociateInterview> findInterviewsPerAssociate(Pageable page);
 	NumberOfInterviewsCount findAssociateInterviewsData();

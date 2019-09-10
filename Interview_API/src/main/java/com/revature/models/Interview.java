@@ -1,7 +1,6 @@
 package com.revature.models;
 
 import java.util.Date;
-import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+
 
 @Entity
 @Table(name = "interview")
@@ -28,6 +29,7 @@ public class Interview {
 	private String associateEmail;
 	
 	private Date scheduled;
+	
 	private Date notified;
 	private Date reviewed;
 	private String place;
